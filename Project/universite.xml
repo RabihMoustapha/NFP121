@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<issae>
+  <administrateurs/>
+  <specialite nom="Informatique">
+    <etudiant password="Rabih" username="Rabih">
+      <valeur>NFP121</valeur>
+    </etudiant>
+    <etudiant password="RabihA" username="RabihA">
+      <valeur>NFP121</valeur>
+    </etudiant>
+  </specialite>
+</issae>
