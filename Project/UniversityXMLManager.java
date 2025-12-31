@@ -1,9 +1,6 @@
-import java.awt.*;
 import java.io.*;
 import java.util.*;
 import java.util.List;
-import javax.swing.*;
-import javax.swing.table.*;
 import javax.xml.parsers.*;
 import javax.xml.transform.*;
 import javax.xml.transform.dom.*;

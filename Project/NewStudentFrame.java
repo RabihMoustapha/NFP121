@@ -1,15 +1,6 @@
 import java.awt.*;
-import java.io.*;
-import java.util.*;
-import java.util.List;
 import javax.swing.*;
-import javax.swing.table.*;
-import javax.xml.parsers.*;
-import javax.xml.transform.*;
-import javax.xml.transform.dom.*;
-import javax.xml.transform.stream.*;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
+
 
 class NewStudentFrame extends JFrame {
     private JTextField nomField = new JTextField(15);

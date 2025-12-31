@@ -1,19 +1,9 @@
 #BlueJ class context
 comment0.target=Demo
-comment1.params=id\ title\ author\ year\ desc\ pages
-comment1.target=DocumentMedia(java.lang.String,\ java.lang.String,\ java.lang.String,\ int,\ java.lang.String,\ int)
-comment2.params=
-comment2.target=int\ getPageCount()
-comment3.params=p
-comment3.target=void\ setPageCount(int)
-comment4.params=
-comment4.target=java.lang.String\ getType()
-comment5.params=
-comment5.target=java.lang.String\ getSpecificDetails()
-comment6.params=args
-comment6.target=void\ main(java.lang.String[])
-comment7.params=library
-comment7.target=void\ createDefaultData(MediaLibrary)
-comment8.params=library
-comment8.target=void\ createSampleMedia(MediaLibrary)
-numComments=9
+comment1.params=args
+comment1.target=void\ main(java.lang.String[])
+comment2.params=library
+comment2.target=void\ createDefaultData(MediaLibrary)
+comment3.params=library
+comment3.target=void\ createSampleMedia(MediaLibrary)
+numComments=4
