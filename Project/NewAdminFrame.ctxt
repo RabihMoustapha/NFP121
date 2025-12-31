@@ -1,0 +1,9 @@
+#BlueJ class context
+comment0.target=NewAdminFrame
+comment1.params=library
+comment1.target=NewAdminFrame(MediaLibrary)
+comment2.params=
+comment2.target=void\ generateUsername()
+comment3.params=
+comment3.target=void\ saveAdmin()
+numComments=4

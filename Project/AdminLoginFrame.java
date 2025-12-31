@@ -65,12 +65,12 @@ class AdminLoginFrame extends JFrame {
 
         cancelBtn.addActionListener(e -> System.exit(0));
 
-        // Create account action (opens student creation)
+        // Create account action (opens admin creation)
         createAccountLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                NewStudentFrame newStudentFrame = new NewStudentFrame(library);
-                newStudentFrame.setVisible(true);
+                NewAdminFrame newAdminFrame = new NewAdminFrame(library);
+                newAdminFrame.setVisible(true);
             }
             
             @Override
