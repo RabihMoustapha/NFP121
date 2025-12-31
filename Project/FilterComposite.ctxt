@@ -1,0 +1,9 @@
+#BlueJ class context
+comment0.target=FilterComposite
+comment1.params=operator
+comment1.target=FilterComposite(FilterComposite.Operator)
+comment2.params=c
+comment2.target=void\ addCriterion(FilterCriteria)
+comment3.params=media
+comment3.target=boolean\ matches(Media)
+numComments=4

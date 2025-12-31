@@ -1,0 +1,11 @@
+#BlueJ class context
+comment0.target=UniversityXMLManager
+comment1.params=library
+comment1.target=void\ loadAllData(MediaLibrary)
+comment2.params=library
+comment2.target=void\ saveAllData(MediaLibrary)
+comment3.params=
+comment3.target=void\ createDefaultXMLFile()
+comment4.params=str
+comment4.target=java.lang.String\ capitalize(java.lang.String)
+numComments=5

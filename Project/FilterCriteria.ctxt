@@ -1,0 +1,5 @@
+#BlueJ class context
+comment0.target=FilterCriteria
+comment1.params=media
+comment1.target=boolean\ matches(Media)
+numComments=2

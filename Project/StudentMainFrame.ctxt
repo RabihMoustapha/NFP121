@@ -1,0 +1,11 @@
+#BlueJ class context
+comment0.target=StudentMainFrame
+comment1.params=lib\ stud
+comment1.target=StudentMainFrame(MediaLibrary,\ Student)
+comment2.params=row\ column
+comment2.target=boolean\ isCellEditable(int,\ int)
+comment3.params=
+comment3.target=void\ loadAllMedia()
+comment4.params=mediaList
+comment4.target=void\ displayMedia(java.util.List)
+numComments=5

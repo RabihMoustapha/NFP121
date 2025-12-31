@@ -1,0 +1,13 @@
+#BlueJ class context
+comment0.target=VideoSession
+comment1.params=id\ title\ author\ year\ desc\ duration
+comment1.target=VideoSession(java.lang.String,\ java.lang.String,\ java.lang.String,\ int,\ java.lang.String,\ int)
+comment2.params=
+comment2.target=int\ getDurationMinutes()
+comment3.params=d
+comment3.target=void\ setDurationMinutes(int)
+comment4.params=
+comment4.target=java.lang.String\ getType()
+comment5.params=
+comment5.target=java.lang.String\ getSpecificDetails()
+numComments=6

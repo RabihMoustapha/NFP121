@@ -1,0 +1,11 @@
+#BlueJ class context
+comment0.target=StudentLoginFrame
+comment1.params=lib
+comment1.target=StudentLoginFrame(MediaLibrary)
+comment2.params=evt
+comment2.target=void\ mouseClicked(java.awt.event.MouseEvent)
+comment3.params=evt
+comment3.target=void\ mouseEntered(java.awt.event.MouseEvent)
+comment4.params=evt
+comment4.target=void\ mouseExited(java.awt.event.MouseEvent)
+numComments=5

@@ -1,0 +1,21 @@
+#BlueJ class context
+comment0.target=Subject
+comment1.params=code\ name\ specialty
+comment1.target=Subject(java.lang.String,\ java.lang.String,\ Specialty)
+comment2.params=
+comment2.target=java.lang.String\ getCode()
+comment3.params=
+comment3.target=java.lang.String\ getName()
+comment4.params=
+comment4.target=Specialty\ getSpecialty()
+comment5.params=
+comment5.target=java.util.Set\ getMediaList()
+comment6.params=m
+comment6.target=void\ addMedia(Media)
+comment7.params=o
+comment7.target=boolean\ equals(java.lang.Object)
+comment8.params=
+comment8.target=int\ hashCode()
+comment9.params=
+comment9.target=java.lang.String\ toString()
+numComments=10

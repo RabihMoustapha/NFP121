@@ -1,0 +1,7 @@
+#BlueJ class context
+comment0.target=SubjectFilter
+comment1.params=subject
+comment1.target=SubjectFilter(Subject)
+comment2.params=media
+comment2.target=boolean\ matches(Media)
+numComments=3

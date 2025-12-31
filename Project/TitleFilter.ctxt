@@ -1,0 +1,7 @@
+#BlueJ class context
+comment0.target=TitleFilter
+comment1.params=title
+comment1.target=TitleFilter(java.lang.String)
+comment2.params=media
+comment2.target=boolean\ matches(Media)
+numComments=3

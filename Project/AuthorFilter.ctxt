@@ -1,0 +1,7 @@
+#BlueJ class context
+comment0.target=AuthorFilter
+comment1.params=author
+comment1.target=AuthorFilter(java.lang.String)
+comment2.params=media
+comment2.target=boolean\ matches(Media)
+numComments=3

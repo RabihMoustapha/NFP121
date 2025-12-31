@@ -1,0 +1,17 @@
+#BlueJ class context
+comment0.target=Specialty
+comment1.params=name
+comment1.target=Specialty(java.lang.String)
+comment2.params=
+comment2.target=java.lang.String\ getName()
+comment3.params=
+comment3.target=java.util.Set\ getSubjects()
+comment4.params=s
+comment4.target=void\ addSubject(Subject)
+comment5.params=o
+comment5.target=boolean\ equals(java.lang.Object)
+comment6.params=
+comment6.target=int\ hashCode()
+comment7.params=
+comment7.target=java.lang.String\ toString()
+numComments=8

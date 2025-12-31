@@ -1,0 +1,9 @@
+#BlueJ class context
+comment0.target=Observable
+comment1.params=o
+comment1.target=void\ registerObserver(Observer)
+comment2.params=o
+comment2.target=void\ removeObserver(Observer)
+comment3.params=info
+comment3.target=void\ notifyObservers(java.lang.Object)
+numComments=4

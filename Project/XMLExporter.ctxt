@@ -1,0 +1,7 @@
+#BlueJ class context
+comment0.target=XMLExporter
+comment1.params=mediaList\ filePath
+comment1.target=void\ export(java.util.List,\ java.lang.String)
+comment2.params=doc\ parent\ name\ value
+comment2.target=void\ addElement(org.w3c.dom.Document,\ org.w3c.dom.Element,\ java.lang.String,\ java.lang.String)
+numComments=3

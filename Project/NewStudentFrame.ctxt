@@ -1,0 +1,11 @@
+#BlueJ class context
+comment0.target=NewStudentFrame
+comment1.params=library
+comment1.target=NewStudentFrame(MediaLibrary)
+comment2.params=
+comment2.target=void\ updateSpecialiteCombo()
+comment3.params=
+comment3.target=void\ generateUsername()
+comment4.params=
+comment4.target=void\ saveStudent()
+numComments=5

@@ -1,0 +1,11 @@
+#BlueJ class context
+comment0.target=MediaFactoryRegistry
+comment1.params=
+comment1.target=MediaFactoryRegistry()
+comment2.params=
+comment2.target=MediaFactoryRegistry\ getInstance()
+comment3.params=type\ factory
+comment3.target=void\ registerFactory(java.lang.String,\ MediaFactory)
+comment4.params=type
+comment4.target=MediaFactory\ getFactory(java.lang.String)
+numComments=5
