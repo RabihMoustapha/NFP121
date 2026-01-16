@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<issae>
+  <administrateurs>
+    <administrateur password="Rabih 123" username="r@gmail.com"/>
+  </administrateurs>
+  <specialite nom="Informatique">
+    <etudiant password="Rabih 123" username="rabih.moustapha@isae.edu.lb">
+      <valeur>NFP121</valeur>
+    </etudiant>
+  </specialite>
+</issae>

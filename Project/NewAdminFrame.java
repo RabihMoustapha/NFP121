@@ -14,7 +14,7 @@ class NewAdminFrame extends JFrame {
     
     public NewAdminFrame(MediaLibrary library) {
         this.library = library;
-        setTitle("New Student");
+        setTitle("New Admin");
         setSize(400, 350);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);

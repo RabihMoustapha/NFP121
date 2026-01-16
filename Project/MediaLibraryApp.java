@@ -2,7 +2,7 @@
 import javax.swing.*;
 
 public class MediaLibraryApp {
-    private static final String DEFAULT_XML_FILE = "students_data.xml";
+    private static final String DEFAULT_XML_FILE = "universite.xml";
     
     public static void main(String[] args) {
         // Initialize library
@@ -161,25 +161,6 @@ public class MediaLibraryApp {
         for (Subject s : physicsSubjects) {
             library.addSubject(s);
             physics.addSubject(s);
-        }
-        
-        // Create sample students
-        Student[] students = {
-            new Student("jdoe", "password123", "Doe", "John", info),
-            new Student("jsmith", "password123", "Smith", "Jane", maths),
-            new Student("bjones", "password123", "Jones", "Bob", physics),
-            new Student("alice", "password123", "Johnson", "Alice", info),
-            new Student("charlie", "password123", "Brown", "Charlie", maths)
-        };
-        
-        for (Student s : students) {
-            // Enroll in random subjects
-            for (Subject subject : s.getSpecialty().getSubjects()) {
-                if (Math.random() > 0.5) {
-                    s.enrollInSubject(subject);
-                }
-            }
-            library.addStudent(s);
         }
     }
 }

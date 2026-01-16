@@ -212,4 +212,17 @@ class MediaLibrary extends Observable {
     public Media getMediaWithoutIncrement(String id) {
         return mediaMap.get(id);
     }
+
+    // XML operations for students
+    public void saveStudentsToXML(String filePath) throws Exception {
+        StudentXMLExporter.exportStudents(this, filePath);
+    }
+
+    public void loadStudentsFromXML(String filePath) throws Exception {
+        XMLDataImporter.importData(filePath, this);
+    }
+
+    public void exportMediaToXML(String filePath) throws Exception {
+        StudentXMLExporter.exportMediaToXML(getAllMedia(), filePath);
+    }
 }
