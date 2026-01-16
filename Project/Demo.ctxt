@@ -1,9 +1,0 @@
-#BlueJ class context
-comment0.target=Demo
-comment1.params=args
-comment1.target=void\ main(java.lang.String[])
-comment2.params=library
-comment2.target=void\ createDefaultData(MediaLibrary)
-comment3.params=library
-comment3.target=void\ createSampleMedia(MediaLibrary)
-numComments=4

@@ -3,7 +3,6 @@ import java.io.*;
 import java.util.*;
 import java.util.List;
 
-
 class MediaLibrary extends Observable {
     private Map<String, Media> mediaMap = new HashMap<>();
     private Map<String, Student> studentMap = new HashMap<>();
@@ -200,13 +199,17 @@ class MediaLibrary extends Observable {
         List<Subject> subjects;
         List<Administrator> administrators;
 
-        public LibraryData(List<Media> ml, List<Student> st, List<Specialty> sp, 
-                          List<Subject> su, List<Administrator> adm) {
+        public LibraryData(List<Media> ml, List<Student> st, List<Specialty> sp,
+                List<Subject> su, List<Administrator> adm) {
             mediaList = ml;
             students = st;
             specialties = sp;
             subjects = su;
             administrators = adm;
         }
+    }
+
+    public Media getMediaWithoutIncrement(String id) {
+        return mediaMap.get(id);
     }
 }

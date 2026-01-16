@@ -17,6 +17,30 @@ class StudentMainFrame extends JFrame {
         setSize(900, 500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+        JButton addMediaBtn = new JButton("Add Media");
+        JButton editMediaBtn = new JButton("Edit Selected");
+        JButton deleteMediaBtn = new JButton("Delete Selected");
+
+        // Écouteurs
+        addMediaBtn.addActionListener(e -> showAddMediaDialog());
+        editMediaBtn.addActionListener(e -> editSelectedMedia());
+        deleteMediaBtn.addActionListener(e -> deleteSelectedMedia());
+
+        // Mettre à jour l'état des boutons selon la sélection
+        mediaTable.getSelectionModel().addListSelectionListener(e -> {
+            boolean hasSelection = mediaTable.getSelectedRow() >= 0;
+            if (hasSelection) {
+                String id = (String) tableModel.getValueAt(mediaTable.getSelectedRow(), 0);
+                Media selected = library.getMedia(id); // Note: getMedia incrémente l'accès, mais c'est acceptable
+                boolean canEdit = student.canEditMedia(selected);
+                editMediaBtn.setEnabled(canEdit);
+                deleteMediaBtn.setEnabled(canEdit);
+            } else {
+                editMediaBtn.setEnabled(false);
+                deleteMediaBtn.setEnabled(false);
+            }
+        });
+
         // Student info panel
         JPanel infoPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         infoPanel.add(new JLabel("Student: " + stud.getNom() + " " + stud.getPrenom()));
@@ -58,6 +82,9 @@ class StudentMainFrame extends JFrame {
         buttonPanel.add(viewBtn);
         buttonPanel.add(filterBtn);
         buttonPanel.add(logoutBtn);
+        buttonPanel.add(addMediaBtn);
+        buttonPanel.add(editMediaBtn);
+        buttonPanel.add(deleteMediaBtn);
 
         // Layout
         setLayout(new BorderLayout(5, 5));
@@ -137,6 +164,49 @@ class StudentMainFrame extends JFrame {
                     media.getType(),
                     media.getAccessCount()
             });
+        }
+    }
+
+    private void showAddMediaDialog() {
+        AddEditMediaDialog dialog = new AddEditMediaDialog(this, library, student, null);
+        dialog.setVisible(true);
+        if (dialog.isSaved()) {
+            loadAllMedia();
+        }
+    }
+
+    private void editSelectedMedia() {
+        int row = mediaTable.getSelectedRow();
+        if (row >= 0) {
+            String id = (String) tableModel.getValueAt(row, 0);
+            Media media = library.getMedia(id);
+            if (media != null && student.canEditMedia(media)) {
+                AddEditMediaDialog dialog = new AddEditMediaDialog(this, library, student, media);
+                dialog.setVisible(true);
+                if (dialog.isSaved()) {
+                    loadAllMedia();
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "You cannot edit this media.");
+            }
+        }
+    }
+
+    private void deleteSelectedMedia() {
+        int row = mediaTable.getSelectedRow();
+        if (row >= 0) {
+            String id = (String) tableModel.getValueAt(row, 0);
+            Media media = library.getMedia(id);
+            if (media != null && student.canEditMedia(media)) {
+                int confirm = JOptionPane.showConfirmDialog(this,
+                        "Delete media: " + media.getTitle() + "?", "Confirm", JOptionPane.YES_NO_OPTION);
+                if (confirm == JOptionPane.YES_OPTION) {
+                    library.removeMedia(id);
+                    loadAllMedia();
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "You cannot delete this media.");
+            }
         }
     }
 }

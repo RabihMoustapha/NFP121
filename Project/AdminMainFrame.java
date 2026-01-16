@@ -702,4 +702,33 @@ class AdminMainFrame extends JFrame {
             });
         }
     }
+
+    // Remplacer showAddMediaDialog() existant par:
+private void showAddMediaDialog() {
+    AddEditMediaDialog dialog = new AddEditMediaDialog(this, library, null, null);
+    dialog.setVisible(true);
+    if (dialog.isSaved()) {
+        loadMediaData();
+    }
+}
+
+// Ajouter méthode pour modifier un média
+private void modifySelectedMedia() {
+    int row = mediaTable.getSelectedRow();
+    if (row >= 0) {
+        String id = (String) tableModel.getValueAt(row, 0);
+        Media media = library.getMedia(id);
+        if (media != null) {
+            AddEditMediaDialog dialog = new AddEditMediaDialog(this, library, null, media);
+            dialog.setVisible(true);
+            if (dialog.isSaved()) {
+                loadMediaData();
+            }
+        }
+    }
+}
+
+JButton modifyBtn = new JButton("Modify Media");
+controlPanel.add(modifyBtn); // Après deleteBtn
+modifyBtn.addActionListener(e -> modifySelectedMedia());
 }

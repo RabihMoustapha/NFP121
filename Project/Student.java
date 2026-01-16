@@ -83,4 +83,8 @@ class Student implements Observer, Serializable {
     public String toString() {
         return nom + " " + prenom + " (" + username + ") - " + specialty.getName();
     }
+
+    public boolean canEditMedia(Media media) {
+        return media.getSubjects().stream().anyMatch(subject -> enrolledSubjects.contains(subject));
+    }
 }
