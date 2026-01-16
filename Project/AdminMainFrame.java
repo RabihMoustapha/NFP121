@@ -1,14 +1,13 @@
-import java.awt.*;
-import java.util.*;
-import java.util.List;
+// AdminMainFrame.java
 import javax.swing.*;
 import javax.swing.table.*;
+import java.awt.*;
+import java.io.File;
 
 class AdminMainFrame extends JFrame {
     private MediaLibrary library;
     private JTable mediaTable;
     private DefaultTableModel tableModel;
-    private JButton addStudentBtn;
 
     public AdminMainFrame(MediaLibrary lib) {
         this.library = lib;
@@ -22,11 +21,12 @@ class AdminMainFrame extends JFrame {
 
         JButton addBtn = new JButton("Add Media");
         JButton deleteBtn = new JButton("Delete Media");
-        addStudentBtn = new JButton("Add Student");
+        JButton modifyBtn = new JButton("Modify Media");
+        JButton addStudentBtn = new JButton("Add Student");
         JButton manageSubjectsBtn = new JButton("Manage Subjects");
         
-        JButton saveXmlBtn = new JButton("Save to XML");
-        JButton loadXmlBtn = new JButton("Reload from XML");
+        JButton exportStudentsXmlBtn = new JButton("Export Students XML");
+        JButton importStudentsXmlBtn = new JButton("Import Students XML");
         
         JButton exportXmlBtn = new JButton("Export Media XML");
         JButton exportCsvBtn = new JButton("Export Media CSV");
@@ -36,18 +36,19 @@ class AdminMainFrame extends JFrame {
         JButton saveBtn = new JButton("Save Binary");
         JButton loadBtn = new JButton("Load Binary");
         JButton viewStudentsBtn = new JButton("View Students");
-        JButton viewAdminsBtn = new JButton("View Admins");
-        JButton addAdminBtn = new JButton("Add Admin");
+        JButton backupAllBtn = new JButton("Backup All Data");
+        JButton restoreBackupBtn = new JButton("Restore Backup");
         JButton logoutBtn = new JButton("Logout");
 
         // Ajouter les boutons au panel
         controlPanel.add(addBtn);
         controlPanel.add(deleteBtn);
+        controlPanel.add(modifyBtn);
         controlPanel.add(addStudentBtn);
         controlPanel.add(manageSubjectsBtn);
-        controlPanel.add(saveXmlBtn);
+        controlPanel.add(exportStudentsXmlBtn);
         
-        controlPanel.add(loadXmlBtn);
+        controlPanel.add(importStudentsXmlBtn);
         controlPanel.add(exportXmlBtn);
         controlPanel.add(exportCsvBtn);
         controlPanel.add(statsBtn);
@@ -56,8 +57,8 @@ class AdminMainFrame extends JFrame {
         controlPanel.add(saveBtn);
         controlPanel.add(loadBtn);
         controlPanel.add(viewStudentsBtn);
-        controlPanel.add(viewAdminsBtn);
-        controlPanel.add(addAdminBtn);
+        controlPanel.add(backupAllBtn);
+        controlPanel.add(restoreBackupBtn);
         controlPanel.add(logoutBtn);
 
         // Media table
@@ -80,12 +81,36 @@ class AdminMainFrame extends JFrame {
         loadMediaData();
 
         // Event listeners
-        addBtn.addActionListener(e -> showAddMediaDialog());
+        addBtn.addActionListener(e -> {
+            AddEditMediaDialog dialog = new AddEditMediaDialog(this, library, null, null);
+            dialog.setVisible(true);
+            if (dialog.isSaved()) {
+                loadMediaData();
+            }
+        });
+        
+        modifyBtn.addActionListener(e -> {
+            int row = mediaTable.getSelectedRow();
+            if (row >= 0) {
+                String id = (String) tableModel.getValueAt(row, 0);
+                Media media = library.getMediaWithoutIncrement(id);
+                if (media != null) {
+                    AddEditMediaDialog dialog = new AddEditMediaDialog(this, library, null, media);
+                    dialog.setVisible(true);
+                    if (dialog.isSaved()) {
+                        loadMediaData();
+                    }
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Please select a media to modify.");
+            }
+        });
+        
         deleteBtn.addActionListener(e -> deleteSelectedMedia());
         addStudentBtn.addActionListener(e -> showAddStudentDialog());
         manageSubjectsBtn.addActionListener(e -> showManageSubjectsDialog());
-        saveXmlBtn.addActionListener(e -> saveToXML());
-        loadXmlBtn.addActionListener(e -> loadFromXML());
+        exportStudentsXmlBtn.addActionListener(e -> exportStudentsXML());
+        importStudentsXmlBtn.addActionListener(e -> importStudentsXML());
         exportXmlBtn.addActionListener(e -> exportMedia("XML"));
         exportCsvBtn.addActionListener(e -> exportMedia("CSV"));
         statsBtn.addActionListener(e -> showStatistics());
@@ -93,54 +118,14 @@ class AdminMainFrame extends JFrame {
         saveBtn.addActionListener(e -> saveBinary());
         loadBtn.addActionListener(e -> loadBinary());
         viewStudentsBtn.addActionListener(e -> showStudentsList());
-        viewAdminsBtn.addActionListener(e -> showAdminsList());
-        addAdminBtn.addActionListener(e -> showAddAdminDialog());
+        backupAllBtn.addActionListener(e -> backupAllData());
+        restoreBackupBtn.addActionListener(e -> restoreFromBackup());
         logoutBtn.addActionListener(e -> {
             dispose();
             new AdminLoginFrame(library).setVisible(true);
         });
 
         setLocationRelativeTo(null);
-    }
-    
-    private void saveToXML() {
-        try {
-            library.saveAllDataToXML();
-            JOptionPane.showMessageDialog(this, 
-                "All data saved to universite.xml successfully!",
-                "Save Complete", 
-                JOptionPane.INFORMATION_MESSAGE);
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, 
-                "Save failed: " + ex.getMessage(),
-                "Save Error", 
-                JOptionPane.ERROR_MESSAGE);
-        }
-    }
-    
-    private void loadFromXML() {
-        try {
-            int confirm = JOptionPane.showConfirmDialog(this,
-                "This will reload all data from universite.xml.\n" +
-                "Current unsaved data will be lost.\n" +
-                "Continue?",
-                "Confirm Reload",
-                JOptionPane.YES_NO_OPTION);
-            
-            if (confirm == JOptionPane.YES_OPTION) {
-                library.loadAllDataFromXML();
-                loadMediaData();
-                JOptionPane.showMessageDialog(this, 
-                    "Data reloaded from universite.xml successfully!",
-                    "Reload Complete", 
-                    JOptionPane.INFORMATION_MESSAGE);
-            }
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, 
-                "Reload failed: " + ex.getMessage(),
-                "Reload Error", 
-                JOptionPane.ERROR_MESSAGE);
-        }
     }
     
     private void showAddStudentDialog() {
@@ -187,13 +172,6 @@ class AdminMainFrame extends JFrame {
                     defaultSpec.addSubject(newSubject);
                     
                     listModel.addElement(newSubject.getCode() + " - " + newSubject.getName());
-                    
-                    // Sauvegarder dans XML
-                    try {
-                        library.saveAllDataToXML();
-                    } catch (Exception ex) {
-                        JOptionPane.showMessageDialog(dialog, "Failed to save to XML: " + ex.getMessage());
-                    }
                 }
             }
         });
@@ -210,26 +188,7 @@ class AdminMainFrame extends JFrame {
                     JOptionPane.YES_NO_OPTION);
                 
                 if (confirm == JOptionPane.YES_OPTION) {
-                    // Remove from library
-                    Subject subject = library.getSubject(code);
-                    if (subject != null) {
-                        // Remove from specialty first
-                        Specialty spec = subject.getSpecialty();
-                        if (spec != null) {
-                            spec.getSubjects().remove(subject);
-                        }
-                        // Then remove from library
-                        library.getAllSubjects().remove(subject);
-                    }
-                    
                     listModel.remove(selectedIndex);
-                    
-                    // Sauvegarder dans XML
-                    try {
-                        library.saveAllDataToXML();
-                    } catch (Exception ex) {
-                        JOptionPane.showMessageDialog(dialog, "Failed to save to XML: " + ex.getMessage());
-                    }
                 }
             }
         });
@@ -242,137 +201,117 @@ class AdminMainFrame extends JFrame {
         dialog.setVisible(true);
     }
     
-    private void showAddAdminDialog() {
-        JDialog dialog = new JDialog(this, "Add Administrator", true);
-        dialog.setSize(400, 350);
-        dialog.setLayout(new BorderLayout());
+    private void exportStudentsXML() {
+        JFileChooser chooser = new JFileChooser();
+        chooser.setDialogTitle("Export Students to XML");
+        chooser.setSelectedFile(new File("students_data.xml"));
         
-        JPanel form = new JPanel(new GridLayout(5, 2, 5, 5));
-        form.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        
-        JTextField nomField = new JTextField();
-        JTextField prenomField = new JTextField();
-        JTextField emailField = new JTextField();
-        JPasswordField passwordField = new JPasswordField();
-        JPasswordField confirmPasswordField = new JPasswordField();
-        
-        form.add(new JLabel("Nom:"));
-        form.add(nomField);
-        form.add(new JLabel("Prenom:"));
-        form.add(prenomField);
-        form.add(new JLabel("Email:"));
-        form.add(emailField);
-        form.add(new JLabel("Password:"));
-        form.add(passwordField);
-        form.add(new JLabel("Confirm Password:"));
-        form.add(confirmPasswordField);
-        
-        JPanel buttonPanel = new JPanel();
-        JButton saveBtn = new JButton("Save");
-        JButton cancelBtn = new JButton("Cancel");
-        buttonPanel.add(saveBtn);
-        buttonPanel.add(cancelBtn);
-        
-        saveBtn.addActionListener(e -> {
-            String nom = nomField.getText().trim();
-            String prenom = prenomField.getText().trim();
-            String email = emailField.getText().trim();
-            String password = new String(passwordField.getPassword());
-            String confirmPassword = new String(confirmPasswordField.getPassword());
-            
-            if (nom.isEmpty() || prenom.isEmpty() || email.isEmpty() || password.isEmpty()) {
-                JOptionPane.showMessageDialog(dialog, "Please fill in all required fields", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            
-            if (!password.equals(confirmPassword)) {
-                JOptionPane.showMessageDialog(dialog, "Passwords do not match", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            
-            // Vérifier si l'email existe déjà
-            if (library.getAllAdministrators().stream().anyMatch(a -> a.getUsername().equals(email)) ||
-                library.getAllStudents().stream().anyMatch(s -> s.getUsername().equals(email))) {
-                JOptionPane.showMessageDialog(dialog, "Email already exists", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            
-            Administrator admin = new Administrator(email, password, nom, prenom, email);
-            library.addAdministrator(admin);
-            
+        if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
             try {
-                library.saveAllDataToXML();
-                JOptionPane.showMessageDialog(dialog, 
-                    "Administrator added and saved to universite.xml successfully!",
-                    "Success", 
+                library.saveStudentsToXML(chooser.getSelectedFile().getAbsolutePath());
+                JOptionPane.showMessageDialog(this, 
+                    "Students exported to XML successfully!\n\n" +
+                    "File: " + chooser.getSelectedFile().getName(),
+                    "Export Success", 
                     JOptionPane.INFORMATION_MESSAGE);
-                dialog.dispose();
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(dialog, 
-                    "Administrator added but XML save failed: " + ex.getMessage(),
-                    "Warning", 
-                    JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, 
+                    "Export failed: " + ex.getMessage(),
+                    "Export Error", 
+                    JOptionPane.ERROR_MESSAGE);
             }
-        });
-        
-        cancelBtn.addActionListener(e -> dialog.dispose());
-        
-        dialog.add(form, BorderLayout.CENTER);
-        dialog.add(buttonPanel, BorderLayout.SOUTH);
-        dialog.setVisible(true);
+        }
     }
     
-    private void showAdminsList() {
-        JDialog dialog = new JDialog(this, "Administrator List", true);
-        dialog.setSize(600, 400);
-        dialog.setLayout(new BorderLayout());
+    private void importStudentsXML() {
+        JFileChooser chooser = new JFileChooser();
+        chooser.setDialogTitle("Import Students from XML");
         
-        String[] columns = {"Username", "Nom", "Prenom", "Email"};
-        DefaultTableModel adminTableModel = new DefaultTableModel(columns, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
+        if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            try {
+                int confirm = JOptionPane.showConfirmDialog(this,
+                    "This will import students from XML.\n" +
+                    "Existing students with same username will be skipped.\n" +
+                    "Continue?",
+                    "Confirm Import",
+                    JOptionPane.YES_NO_OPTION);
+                
+                if (confirm == JOptionPane.YES_OPTION) {
+                    library.loadStudentsFromXML(chooser.getSelectedFile().getAbsolutePath());
+                    JOptionPane.showMessageDialog(this, 
+                        "Students imported from XML successfully!",
+                        "Import Success", 
+                        JOptionPane.INFORMATION_MESSAGE);
+                }
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, 
+                    "Import failed: " + ex.getMessage(),
+                    "Import Error", 
+                    JOptionPane.ERROR_MESSAGE);
             }
-        };
-        
-        JTable adminTable = new JTable(adminTableModel);
-        JScrollPane scrollPane = new JScrollPane(adminTable);
-        
-        // Populate table
-        for (Administrator admin : library.getAllAdministrators()) {
-            adminTableModel.addRow(new Object[]{
-                admin.getUsername(),
-                admin.getNom(),
-                admin.getPrenom(),
-                admin.getEmail()
-            });
         }
+    }
+    
+    private void backupAllData() {
+        JFileChooser chooser = new JFileChooser();
+        chooser.setDialogTitle("Backup All Data");
+        chooser.setSelectedFile(new File("media_library_backup.xml"));
         
-        JPanel buttonPanel = new JPanel();
-        JButton refreshBtn = new JButton("Refresh");
-        JButton closeBtn = new JButton("Close");
-        
-        refreshBtn.addActionListener(e -> {
-            adminTableModel.setRowCount(0);
-            for (Administrator admin : library.getAllAdministrators()) {
-                adminTableModel.addRow(new Object[]{
-                    admin.getUsername(),
-                    admin.getNom(),
-                    admin.getPrenom(),
-                    admin.getEmail()
-                });
+        if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+            try {
+                // Sauvegarder les étudiants
+                StudentXMLExporter.exportStudents(library, chooser.getSelectedFile().getAbsolutePath());
+                
+                // Sauvegarder les médias dans un fichier séparé
+                String mediaFile = chooser.getSelectedFile().getAbsolutePath()
+                    .replace(".xml", "_media.xml");
+                XMLExporter mediaExporter = new XMLExporter();
+                mediaExporter.export(library.getAllMedia(), mediaFile);
+                
+                JOptionPane.showMessageDialog(this, 
+                    "All data backed up successfully!\n\n" +
+                    "Students: " + chooser.getSelectedFile().getName() + "\n" +
+                    "Media: " + new File(mediaFile).getName(),
+                    "Backup Complete", 
+                    JOptionPane.INFORMATION_MESSAGE);
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, 
+                    "Backup failed: " + ex.getMessage(),
+                    "Backup Error", 
+                    JOptionPane.ERROR_MESSAGE);
             }
-        });
+        }
+    }
+    
+    private void restoreFromBackup() {
+        JFileChooser chooser = new JFileChooser();
+        chooser.setDialogTitle("Restore Data from Backup");
         
-        closeBtn.addActionListener(e -> dialog.dispose());
-        
-        buttonPanel.add(refreshBtn);
-        buttonPanel.add(closeBtn);
-        
-        dialog.add(scrollPane, BorderLayout.CENTER);
-        dialog.add(buttonPanel, BorderLayout.SOUTH);
-        
-        dialog.setVisible(true);
+        if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            try {
+                int confirm = JOptionPane.showConfirmDialog(this,
+                    "This will restore data from backup.\n" +
+                    "Current data may be overwritten.\n" +
+                    "Continue?",
+                    "Confirm Restore",
+                    JOptionPane.YES_NO_OPTION);
+                
+                if (confirm == JOptionPane.YES_OPTION) {
+                    // Restaurer les étudiants
+                    XMLDataImporter.importData(chooser.getSelectedFile().getAbsolutePath(), library);
+                    
+                    JOptionPane.showMessageDialog(this, 
+                        "Students restored successfully!",
+                        "Restore Complete", 
+                        JOptionPane.INFORMATION_MESSAGE);
+                }
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, 
+                    "Restore failed: " + ex.getMessage(),
+                    "Restore Error", 
+                    JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }
     
     private void showStudentStatistics() {
@@ -386,18 +325,18 @@ class AdminMainFrame extends JFrame {
         StringBuilder stats = new StringBuilder();
         stats.append("=== STUDENT STATISTICS ===\n\n");
         
-        List<Student> students = library.getAllStudents();
+        java.util.List<Student> students = library.getAllStudents();
         stats.append("Total Students: ").append(students.size()).append("\n\n");
         
         // Group by specialty
-        Map<String, Integer> specialtyCount = new HashMap<>();
+        java.util.Map<String, Integer> specialtyCount = new java.util.HashMap<>();
         for (Student student : students) {
             String specialty = student.getSpecialty().getName();
             specialtyCount.put(specialty, specialtyCount.getOrDefault(specialty, 0) + 1);
         }
         
         stats.append("Students by Specialty:\n");
-        for (Map.Entry<String, Integer> entry : specialtyCount.entrySet()) {
+        for (java.util.Map.Entry<String, Integer> entry : specialtyCount.entrySet()) {
             stats.append("  ").append(entry.getKey()).append(": ").append(entry.getValue()).append("\n");
         }
         
@@ -485,111 +424,6 @@ class AdminMainFrame extends JFrame {
         dialog.setVisible(true);
     }
 
-    private void showAddMediaDialog() {
-        JDialog dialog = new JDialog(this, "Add Media", true);
-        dialog.setSize(400, 450);
-        dialog.setLayout(new GridLayout(10, 2, 5, 5));
-
-        JTextField idField = new JTextField();
-        JTextField titleField = new JTextField();
-        JTextField authorField = new JTextField();
-        JTextField yearField = new JTextField();
-        JTextArea descArea = new JTextArea(3, 20);
-        JScrollPane descScroll = new JScrollPane(descArea);
-
-        JComboBox<String> typeCombo = new JComboBox<>(new String[] { "document", "video", "quiz" });
-        JTextField param1Field = new JTextField();
-        JTextField param2Field = new JTextField();
-        JLabel param2Label = new JLabel("Param 2 (difficulty - quiz only):");
-
-        dialog.add(new JLabel("ID:"));
-        dialog.add(idField);
-        dialog.add(new JLabel("Title:"));
-        dialog.add(titleField);
-        dialog.add(new JLabel("Author:"));
-        dialog.add(authorField);
-        dialog.add(new JLabel("Year:"));
-        dialog.add(yearField);
-        dialog.add(new JLabel("Description:"));
-        dialog.add(descScroll);
-        dialog.add(new JLabel("Type:"));
-        dialog.add(typeCombo);
-        dialog.add(new JLabel("Param 1 (pages/duration):"));
-        dialog.add(param1Field);
-        dialog.add(param2Label);
-        dialog.add(param2Field);
-
-        // Update param2 label based on type selection
-        typeCombo.addActionListener(e -> {
-            String type = (String) typeCombo.getSelectedItem();
-            if ("quiz".equals(type)) {
-                param2Label.setText("Param 2 (difficulty - quiz only):");
-                param2Field.setEnabled(true);
-            } else {
-                param2Label.setText("Param 2 (optional):");
-                param2Field.setEnabled(false);
-                param2Field.setText("");
-            }
-        });
-
-        JButton saveBtn = new JButton("Save");
-        JButton cancelBtn = new JButton("Cancel");
-
-        dialog.add(saveBtn);
-        dialog.add(cancelBtn);
-
-        saveBtn.addActionListener(e -> {
-            try {
-                String type = (String) typeCombo.getSelectedItem();
-                MediaFactory factory = MediaFactoryRegistry.getInstance().getFactory(type);
-
-                Object[] params;
-                if ("quiz".equals(type)) {
-                    params = new Object[] { Integer.parseInt(param1Field.getText()), param2Field.getText() };
-                } else {
-                    params = new Object[] { Integer.parseInt(param1Field.getText()) };
-                }
-
-                Media media = factory.createMedia(
-                        idField.getText(),
-                        titleField.getText(),
-                        authorField.getText(),
-                        Integer.parseInt(yearField.getText()),
-                        descArea.getText(),
-                        params);
-
-                // Add to subjects
-                if (!library.getAllSubjects().isEmpty()) {
-                    // Add to first few subjects
-                    List<Subject> subjects = library.getAllSubjects();
-                    int count = Math.min(3, subjects.size());
-                    for (int i = 0; i < count; i++) {
-                        media.addSubject(subjects.get(i));
-                    }
-                } else {
-                    // Create default subjects if none exist
-                    Specialty info = new Specialty("Informatique");
-                    library.addSpecialty(info);
-                    Subject subject = new Subject("NFA032", "Programming Basics", info);
-                    library.addSubject(subject);
-                    info.addSubject(subject);
-                    media.addSubject(subject);
-                }
-
-                library.addMedia(media);
-                loadMediaData();
-                dialog.dispose();
-                JOptionPane.showMessageDialog(this, "Media added successfully");
-
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(dialog, "Error: " + ex.getMessage());
-            }
-        });
-
-        cancelBtn.addActionListener(e -> dialog.dispose());
-        dialog.setVisible(true);
-    }
-
     private void deleteSelectedMedia() {
         int row = mediaTable.getSelectedRow();
         if (row >= 0) {
@@ -636,7 +470,7 @@ class AdminMainFrame extends JFrame {
         stats.append("Total media: ").append(library.getAllMedia().size()).append("\n");
 
         stats.append("\nTop 5 most accessed:\n");
-        List<Media> top = library.getMostAccessedMedia(5);
+        java.util.List<Media> top = library.getMostAccessedMedia(5);
         for (int i = 0; i < top.size(); i++) {
             Media m = top.get(i);
             stats.append(String.format("%d. %s (%s) - %d accesses%n",
@@ -644,14 +478,14 @@ class AdminMainFrame extends JFrame {
         }
         
         // Media by type
-        Map<String, Integer> typeCount = new HashMap<>();
+        java.util.Map<String, Integer> typeCount = new java.util.HashMap<>();
         for (Media media : library.getAllMedia()) {
             String type = media.getType();
             typeCount.put(type, typeCount.getOrDefault(type, 0) + 1);
         }
         
         stats.append("\nMedia by type:\n");
-        for (Map.Entry<String, Integer> entry : typeCount.entrySet()) {
+        for (java.util.Map.Entry<String, Integer> entry : typeCount.entrySet()) {
             stats.append("  ").append(entry.getKey()).append(": ").append(entry.getValue()).append("\n");
         }
 
@@ -702,33 +536,4 @@ class AdminMainFrame extends JFrame {
             });
         }
     }
-
-    // Remplacer showAddMediaDialog() existant par:
-private void showAddMediaDialog() {
-    AddEditMediaDialog dialog = new AddEditMediaDialog(this, library, null, null);
-    dialog.setVisible(true);
-    if (dialog.isSaved()) {
-        loadMediaData();
-    }
-}
-
-// Ajouter méthode pour modifier un média
-private void modifySelectedMedia() {
-    int row = mediaTable.getSelectedRow();
-    if (row >= 0) {
-        String id = (String) tableModel.getValueAt(row, 0);
-        Media media = library.getMedia(id);
-        if (media != null) {
-            AddEditMediaDialog dialog = new AddEditMediaDialog(this, library, null, media);
-            dialog.setVisible(true);
-            if (dialog.isSaved()) {
-                loadMediaData();
-            }
-        }
-    }
-}
-
-JButton modifyBtn = new JButton("Modify Media");
-controlPanel.add(modifyBtn); // Après deleteBtn
-modifyBtn.addActionListener(e -> modifySelectedMedia());
 }

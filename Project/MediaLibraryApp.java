@@ -1,26 +1,27 @@
-import java.io.File;
+// MediaLibraryApp.java
+import javax.swing.*;
 
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
-
-public class Demo {
+public class MediaLibraryApp {
+    private static final String DEFAULT_XML_FILE = "students_data.xml";
+    
     public static void main(String[] args) {
+        // Initialize library
         MediaLibrary library = new MediaLibrary();
 
         try {
             // Try to load students from XML if file exists
-            File xmlFile = new File("university.xml");
+            java.io.File xmlFile = new java.io.File(DEFAULT_XML_FILE);
             if (xmlFile.exists()) {
-                XMLDataImporter.importData("university.xml", library);
-                System.out.println("Students loaded from XML: " + "university.xml");
+                XMLDataImporter.importData(DEFAULT_XML_FILE, library);
+                System.out.println("Students loaded from XML: " + DEFAULT_XML_FILE);
             } else {
                 System.out.println("No XML file found, creating sample data...");
                 createSampleData(library);
                 
                 // Save sample data to XML
                 try {
-                    StudentXMLExporter.exportStudents(library, "university.xml");
-                    System.out.println("Sample data saved to: " + "university.xml");
+                    StudentXMLExporter.exportStudents(library, DEFAULT_XML_FILE);
+                    System.out.println("Sample data saved to: " + DEFAULT_XML_FILE);
                 } catch (Exception e) {
                     System.out.println("Could not save sample data to XML: " + e.getMessage());
                 }
@@ -181,5 +182,4 @@ public class Demo {
             library.addStudent(s);
         }
     }
-
 }
