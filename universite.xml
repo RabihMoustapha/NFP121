@@ -3,6 +3,7 @@
   <students/>
   <administrators>
     <administrator nom="Admin" password="admin" prenom="System" username="admin"/>
+    <administrator nom="Rabih" password="RM" prenom="Moustapha" username="RM"/>
   </administrators>
   <media/>
 </mediaLibraryData>

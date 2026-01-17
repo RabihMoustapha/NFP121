@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<issae>
+  <specialite nom="Informatique">
+    <etudiant password="RM" username="RM">
+      <valeur>NFA032</valeur>
+    </etudiant>
+  </specialite>
+</issae>

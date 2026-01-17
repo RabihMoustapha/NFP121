@@ -103,13 +103,13 @@ class NewAdminFrame extends JFrame {
         
         try {
             // Sauvegarder les données
-            library.saveAllDataToXML("all_data.xml");
+            library.saveAllDataToXML("universite.xml");
             
             JOptionPane.showMessageDialog(this, 
                 "Administrator added successfully!\n\n" +
                 "Username: " + username + "\n" +
                 "Password: " + password + "\n" +
-                "Auto-saved to: all_data.xml",
+                "Auto-saved to: universite.xml",
                 "Success", 
                 JOptionPane.INFORMATION_MESSAGE);
             
