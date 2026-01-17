@@ -1,7 +1,6 @@
-// Media.java (avec la méthode clearSubjects)
 import java.io.Serializable;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.HashSet;
 
 abstract class Media implements Serializable {
     private static final long serialVersionUID = 1L;

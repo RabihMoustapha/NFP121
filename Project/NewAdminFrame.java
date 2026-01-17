@@ -3,23 +3,23 @@ import javax.swing.*;
 
 
 class NewAdminFrame extends JFrame {
+    private MediaLibrary library;
     private JTextField nomField = new JTextField(15);
     private JTextField prenomField = new JTextField(15);
-    private JTextField emailField = new JTextField(50);
     private JTextField usernameField = new JTextField(15);
     private JPasswordField passwordField = new JPasswordField(15);
+    private JPasswordField confirmPasswordField = new JPasswordField(15);
     private JButton saveButton = new JButton("Save");
     private JButton cancelButton = new JButton("Cancel");
-    private MediaLibrary library;
     
     public NewAdminFrame(MediaLibrary library) {
         this.library = library;
-        setTitle("New Admin");
-        setSize(400, 350);
+        setTitle("New Administrator");
+        setSize(400, 300);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         
-        JPanel form = new JPanel(new GridLayout(7, 2, 5, 5));
+        JPanel form = new JPanel(new GridLayout(6, 2, 5, 5));
         form.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         // Form fields
@@ -27,12 +27,12 @@ class NewAdminFrame extends JFrame {
         form.add(nomField);
         form.add(new JLabel("Prenom:"));
         form.add(prenomField);
-        form.add(new JLabel("Email:"));
-        form.add(emailField);
-        form.add(new JLabel("Username (email):"));
+        form.add(new JLabel("Username:"));
         form.add(usernameField);
         form.add(new JLabel("Password:"));
         form.add(passwordField);
+        form.add(new JLabel("Confirm Password:"));
+        form.add(confirmPasswordField);
         
         // Button panel
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -45,7 +45,7 @@ class NewAdminFrame extends JFrame {
         add(buttonPanel, BorderLayout.SOUTH);
         
         // Action listeners
-        saveButton.addActionListener(e -> saveAdmin());
+        saveButton.addActionListener(e -> saveAdministrator());
         cancelButton.addActionListener(e -> this.dispose());
         
         // Auto-generate username
@@ -58,51 +58,65 @@ class NewAdminFrame extends JFrame {
         String prenom = prenomField.getText().trim();
         
         if (!nom.isEmpty() && !prenom.isEmpty()) {
-            String username = prenom.toLowerCase() + "." + nom.toLowerCase() + "@isae.edu.lb";
+            String username = (prenom.charAt(0) + nom).toLowerCase();
             usernameField.setText(username);
         }
     }
     
-    private void saveAdmin() {
+    private void saveAdministrator() {
         String nom = nomField.getText().trim();
         String prenom = prenomField.getText().trim();
-        String email = emailField.getText().trim();
         String username = usernameField.getText().trim();
         String password = new String(passwordField.getPassword());
+        String confirmPassword = new String(confirmPasswordField.getPassword());
         
-        if (nom.isEmpty() || prenom.isEmpty() || username.isEmpty() || password.isEmpty() || email.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Please fill in all required fields", "Error", JOptionPane.ERROR_MESSAGE);
+        // Validation
+        if (nom.isEmpty() || prenom.isEmpty() || username.isEmpty() || password.isEmpty()) {
+            JOptionPane.showMessageDialog(this, 
+                "Please fill in all required fields", 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
             return;
         }
         
-        // Vérifier si l'username existe déjà (étudiant ou administrateur)
-        if (library.authenticateStudent(username, password) != null || 
-            library.getAllStudents().stream().anyMatch(s -> s.getUsername().equals(username)) ||
-            library.getAllAdministrators().stream().anyMatch(a -> a.getUsername().equals(username))) {
-            JOptionPane.showMessageDialog(this, "Username already exists", "Error", JOptionPane.ERROR_MESSAGE);
+        if (!password.equals(confirmPassword)) {
+            JOptionPane.showMessageDialog(this, 
+                "Passwords do not match", 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        // Vérifier si l'username existe déjà
+        if (library.authenticateAdministrator(username, password) != null || 
+            library.getAllStudents().stream().anyMatch(s -> s.getUsername().equals(username))) {
+            JOptionPane.showMessageDialog(this, 
+                "Username already exists", 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
             return;
         }
         
         // Créer l'administrateur
-        Administrator admin = new Administrator(username, password, nom, prenom, email);
+        Administrator admin = new Administrator(username, password, nom, prenom);
         library.addAdministrator(admin);
         
         try {
-            // Sauvegarder automatiquement dans le fichier universite.xml
-            library.saveAllDataToXML();
+            // Sauvegarder les données
+            library.saveAllDataToXML("all_data.xml");
             
             JOptionPane.showMessageDialog(this, 
-                "Admin added and saved to universite.xml successfully!\n\n" +
+                "Administrator added successfully!\n\n" +
                 "Username: " + username + "\n" +
                 "Password: " + password + "\n" +
-                "Auto-saved to: universite.xml",
+                "Auto-saved to: all_data.xml",
                 "Success", 
                 JOptionPane.INFORMATION_MESSAGE);
             
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, 
-                "Student added but XML save failed: " + ex.getMessage() + "\n" +
-                "Data is only in memory. Please export manually.",
+                "Administrator added but save failed: " + ex.getMessage() + "\n" +
+                "Data is only in memory.",
                 "Warning", 
                 JOptionPane.WARNING_MESSAGE);
         }

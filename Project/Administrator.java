@@ -6,14 +6,12 @@ class Administrator implements Serializable {
     private String password;
     private String nom;
     private String prenom;
-    private String email;
 
-    public Administrator(String username, String password, String nom, String prenom, String email) {
+    public Administrator(String username, String password, String nom, String prenom) {
         this.username = username;
         this.password = password;
         this.nom = nom;
         this.prenom = prenom;
-        this.email = email;
     }
 
     public String getUsername() {
@@ -32,20 +30,10 @@ class Administrator implements Serializable {
         return prenom;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (!(o instanceof Administrator))
-            return false;
+        if (this == o) return true;
+        if (!(o instanceof Administrator)) return false;
         return username.equals(((Administrator) o).username);
     }
 
@@ -56,6 +44,6 @@ class Administrator implements Serializable {
 
     @Override
     public String toString() {
-        return nom + " " + prenom + " (" + username + ") - " + email;
+        return nom + " " + prenom + " (" + username + ")";
     }
 }

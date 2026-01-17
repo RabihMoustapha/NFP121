@@ -1,6 +1,6 @@
+import java.io.Serializable;
 import java.util.Set;
 import java.util.HashSet;
-import java.io.Serializable;
 
 class Student implements Observer, Serializable {
     private static final long serialVersionUID = 1L;
@@ -55,6 +55,10 @@ class Student implements Observer, Serializable {
         return false;
     }
 
+    public boolean canEditMedia(Media media) {
+        return media.getSubjects().stream().anyMatch(subject -> enrolledSubjects.contains(subject));
+    }
+
     @Override
     public void update(Object info) {
         if (info instanceof Media) {
@@ -82,9 +86,5 @@ class Student implements Observer, Serializable {
     @Override
     public String toString() {
         return nom + " " + prenom + " (" + username + ") - " + specialty.getName();
-    }
-
-    public boolean canEditMedia(Media media) {
-        return media.getSubjects().stream().anyMatch(subject -> enrolledSubjects.contains(subject));
     }
 }

@@ -1,6 +1,6 @@
+import java.io.Serializable;
 import java.util.Set;
 import java.util.HashSet;
-import java.io.Serializable;
 
 class Specialty implements Serializable {
     private static final long serialVersionUID = 1L;

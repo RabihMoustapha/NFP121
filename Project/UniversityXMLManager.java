@@ -38,8 +38,7 @@ class UniversityXMLManager {
             String prenom = emailPart.contains(".") ? 
                 emailPart.substring(0, emailPart.indexOf(".")) : "Admin";
             
-            Administrator admin = new Administrator(username, password, 
-                capitalize(nom), capitalize(prenom), email);
+            Administrator admin = new Administrator(username, password, capitalize(nom), capitalize(prenom));
             library.addAdministrator(admin);
         }
 

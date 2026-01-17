@@ -1,7 +1,7 @@
-// StudentMainFrame.java
 import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;
+import java.util.List;
 
 class StudentMainFrame extends JFrame {
     private MediaLibrary library;
@@ -194,7 +194,7 @@ class StudentMainFrame extends JFrame {
         displayMedia(library.getAllMedia());
     }
 
-    private void displayMedia(java.util.List<Media> mediaList) {
+    private void displayMedia(List<Media> mediaList) {
         tableModel.setRowCount(0);
         for (Media media : mediaList) {
             tableModel.addRow(new Object[] {

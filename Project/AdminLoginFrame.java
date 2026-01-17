@@ -1,7 +1,6 @@
 import java.awt.*;
 import javax.swing.*;
 
-
 class AdminLoginFrame extends JFrame {
     private MediaLibrary library;
     private JTextField userField;
@@ -39,12 +38,12 @@ class AdminLoginFrame extends JFrame {
         
         // Link panel at bottom
         JPanel linkPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        JLabel createAccountLabel = new JLabel("<html><u>Create Admin Account</u></html>");
-        createAccountLabel.setForeground(Color.BLUE);
-        createAccountLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        createAccountLabel.setToolTipText("Click to create a new admin account");
+        JLabel createAdminLabel = new JLabel("<html><u>Create New Administrator</u></html>");
+        createAdminLabel.setForeground(Color.BLUE);
+        createAdminLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        createAdminLabel.setToolTipText("Click to create a new administrator account");
         
-        linkPanel.add(createAccountLabel);
+        linkPanel.add(createAdminLabel);
         mainPanel.add(linkPanel, BorderLayout.SOUTH);
         
         add(mainPanel);
@@ -65,8 +64,8 @@ class AdminLoginFrame extends JFrame {
 
         cancelBtn.addActionListener(e -> System.exit(0));
 
-        // Create account action (opens admin creation)
-        createAccountLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+        // Create admin action
+        createAdminLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 NewAdminFrame newAdminFrame = new NewAdminFrame(library);
@@ -75,12 +74,12 @@ class AdminLoginFrame extends JFrame {
             
             @Override
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                createAccountLabel.setForeground(new Color(0, 100, 255));
+                createAdminLabel.setForeground(new Color(0, 100, 255));
             }
             
             @Override
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                createAccountLabel.setForeground(Color.BLUE);
+                createAdminLabel.setForeground(Color.BLUE);
             }
         });
 

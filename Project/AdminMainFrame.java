@@ -1,13 +1,17 @@
-// AdminMainFrame.java
 import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;
 import java.io.File;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.List;
+import java.util.ArrayList;
 
 class AdminMainFrame extends JFrame {
     private MediaLibrary library;
     private JTable mediaTable;
     private DefaultTableModel tableModel;
+    private JButton addStudentBtn;
 
     public AdminMainFrame(MediaLibrary lib) {
         this.library = lib;
@@ -22,7 +26,7 @@ class AdminMainFrame extends JFrame {
         JButton addBtn = new JButton("Add Media");
         JButton deleteBtn = new JButton("Delete Media");
         JButton modifyBtn = new JButton("Modify Media");
-        JButton addStudentBtn = new JButton("Add Student");
+        addStudentBtn = new JButton("Add Student");
         JButton manageSubjectsBtn = new JButton("Manage Subjects");
         
         JButton exportStudentsXmlBtn = new JButton("Export Students XML");
@@ -325,18 +329,18 @@ class AdminMainFrame extends JFrame {
         StringBuilder stats = new StringBuilder();
         stats.append("=== STUDENT STATISTICS ===\n\n");
         
-        java.util.List<Student> students = library.getAllStudents();
+        List<Student> students = library.getAllStudents();
         stats.append("Total Students: ").append(students.size()).append("\n\n");
         
         // Group by specialty
-        java.util.Map<String, Integer> specialtyCount = new java.util.HashMap<>();
+        Map<String, Integer> specialtyCount = new HashMap<>();
         for (Student student : students) {
             String specialty = student.getSpecialty().getName();
             specialtyCount.put(specialty, specialtyCount.getOrDefault(specialty, 0) + 1);
         }
         
         stats.append("Students by Specialty:\n");
-        for (java.util.Map.Entry<String, Integer> entry : specialtyCount.entrySet()) {
+        for (Map.Entry<String, Integer> entry : specialtyCount.entrySet()) {
             stats.append("  ").append(entry.getKey()).append(": ").append(entry.getValue()).append("\n");
         }
         
@@ -469,24 +473,29 @@ class AdminMainFrame extends JFrame {
         stats.append("=== MEDIA STATISTICS ===\n\n");
         stats.append("Total media: ").append(library.getAllMedia().size()).append("\n");
 
-        stats.append("\nTop 5 most accessed:\n");
-        java.util.List<Media> top = library.getMostAccessedMedia(5);
-        for (int i = 0; i < top.size(); i++) {
-            Media m = top.get(i);
-            stats.append(String.format("%d. %s (%s) - %d accesses%n",
-                    i + 1, m.getTitle(), m.getId(), m.getAccessCount()));
-        }
-        
-        // Media by type
-        java.util.Map<String, Integer> typeCount = new java.util.HashMap<>();
-        for (Media media : library.getAllMedia()) {
-            String type = media.getType();
-            typeCount.put(type, typeCount.getOrDefault(type, 0) + 1);
-        }
-        
-        stats.append("\nMedia by type:\n");
-        for (java.util.Map.Entry<String, Integer> entry : typeCount.entrySet()) {
-            stats.append("  ").append(entry.getKey()).append(": ").append(entry.getValue()).append("\n");
+        // Vérifier s'il y a des médias avant d'afficher les statistiques
+        if (!library.getAllMedia().isEmpty()) {
+            stats.append("\nTop 5 most accessed:\n");
+            List<Media> top = library.getMostAccessedMedia(5);
+            for (int i = 0; i < top.size(); i++) {
+                Media m = top.get(i);
+                stats.append(String.format("%d. %s (%s) - %d accesses%n",
+                        i + 1, m.getTitle(), m.getId(), m.getAccessCount()));
+            }
+            
+            // Media by type
+            Map<String, Integer> typeCount = new HashMap<>();
+            for (Media media : library.getAllMedia()) {
+                String type = media.getType();
+                typeCount.put(type, typeCount.getOrDefault(type, 0) + 1);
+            }
+            
+            stats.append("\nMedia by type:\n");
+            for (Map.Entry<String, Integer> entry : typeCount.entrySet()) {
+                stats.append("  ").append(entry.getKey()).append(": ").append(entry.getValue()).append("\n");
+            }
+        } else {
+            stats.append("\nNo media available.\n");
         }
 
         statsArea.setText(stats.toString());

@@ -1,5 +1,5 @@
-import java.util.ArrayList;
 import java.util.List;
+import java.util.ArrayList;
 
 class FilterComposite implements FilterCriteria {
     public enum Operator {

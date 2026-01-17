@@ -5,13 +5,14 @@ import javax.xml.transform.*;
 import javax.xml.transform.dom.*;
 import javax.xml.transform.stream.*;
 import org.w3c.dom.Element;
+import org.w3c.dom.Document;
 
 class XMLExporter implements Exporter {
     @Override
     public void export(List<Media> mediaList, String filePath) throws Exception {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
-        org.w3c.dom.Document doc = builder.newDocument();
+        Document doc = builder.newDocument();
 
         Element root = doc.createElement("mediaLibrary");
         doc.appendChild(root);
@@ -47,7 +48,7 @@ class XMLExporter implements Exporter {
         transformer.transform(source, result);
     }
 
-    private void addElement(org.w3c.dom.Document doc, Element parent, String name, String value) {
+    private void addElement(Document doc, Element parent, String name, String value) {
         Element elem = doc.createElement(name);
         elem.setTextContent(value);
         parent.appendChild(elem);

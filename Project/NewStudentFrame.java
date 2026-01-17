@@ -1,6 +1,6 @@
 import java.awt.*;
 import javax.swing.*;
-
+import java.io.File;
 
 class NewStudentFrame extends JFrame {
     private JTextField nomField = new JTextField(15);
@@ -35,7 +35,7 @@ class NewStudentFrame extends JFrame {
         form.add(specialiteCombo);
         form.add(new JLabel("Valeur:"));
         form.add(valeurCombo);
-        form.add(new JLabel("Username (email):"));
+        form.add(new JLabel("Username:"));
         form.add(usernameField);
         form.add(new JLabel("Password:"));
         form.add(passwordField);
@@ -61,15 +61,16 @@ class NewStudentFrame extends JFrame {
     
     private void updateSpecialiteCombo() {
         specialiteCombo.removeAllItems();
-        // Récupérer les spécialités de la bibliothèque
-        for (Specialty specialty : library.getAllSpecialties()) {
-            specialiteCombo.addItem(specialty.getName());
-        }
-        // Si vide, ajouter des spécialités par défaut
-        if (specialiteCombo.getItemCount() == 0) {
+        // Ajouter des spécialités par défaut si la bibliothèque est vide
+        if (library.getAllSpecialties().isEmpty()) {
             specialiteCombo.addItem("Informatique");
             specialiteCombo.addItem("Mathematiques");
             specialiteCombo.addItem("Physique");
+        } else {
+            // Récupérer les spécialités de la bibliothèque
+            for (Specialty specialty : library.getAllSpecialties()) {
+                specialiteCombo.addItem(specialty.getName());
+            }
         }
     }
     
@@ -78,7 +79,7 @@ class NewStudentFrame extends JFrame {
         String prenom = prenomField.getText().trim();
         
         if (!nom.isEmpty() && !prenom.isEmpty()) {
-            String username = prenom.toLowerCase() + "." + nom.toLowerCase() + "@isae.edu.lb";
+            String username = (prenom.charAt(0) + nom).toLowerCase();
             usernameField.setText(username);
         }
     }
@@ -96,10 +97,9 @@ class NewStudentFrame extends JFrame {
             return;
         }
         
-        // Vérifier si l'username existe déjà (étudiant ou administrateur)
+        // Vérifier si l'username existe déjà
         if (library.authenticateStudent(username, password) != null || 
-            library.getAllStudents().stream().anyMatch(s -> s.getUsername().equals(username)) ||
-            library.getAllAdministrators().stream().anyMatch(a -> a.getUsername().equals(username))) {
+            library.getAllStudents().stream().anyMatch(s -> s.getUsername().equals(username))) {
             JOptionPane.showMessageDialog(this, "Username already exists", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -125,14 +125,21 @@ class NewStudentFrame extends JFrame {
         library.addStudent(student);
         
         try {
-            // Sauvegarder automatiquement dans le fichier universite.xml
-            library.saveAllDataToXML();
+            // Sauvegarder automatiquement dans le fichier XML par défaut
+            File defaultFile = new File("students_data.xml");
+            if (defaultFile.exists()) {
+                // Ajouter à l'XML existant
+                library.saveStudentsToXML("students_data.xml");
+            } else {
+                // Créer un nouveau fichier
+                StudentXMLExporter.exportStudents(library, "students_data.xml");
+            }
             
             JOptionPane.showMessageDialog(this, 
-                "Student added and saved to universite.xml successfully!\n\n" +
+                "Student added and saved to XML successfully!\n\n" +
                 "Username: " + username + "\n" +
                 "Password: " + password + "\n" +
-                "Auto-saved to: universite.xml",
+                "Auto-saved to: students_data.xml",
                 "Success", 
                 JOptionPane.INFORMATION_MESSAGE);
             

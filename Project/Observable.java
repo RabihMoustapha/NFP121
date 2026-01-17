@@ -1,5 +1,5 @@
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 abstract class Observable {
     private List<Observer> observers = new ArrayList<>();

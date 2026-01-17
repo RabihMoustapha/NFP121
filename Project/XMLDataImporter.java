@@ -1,4 +1,3 @@
-// XMLDataImporter.java
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -70,65 +69,5 @@ class XMLDataImporter {
     private static String capitalize(String str) {
         if (str == null || str.isEmpty()) return str;
         return str.substring(0, 1).toUpperCase() + str.substring(1).toLowerCase();
-    }
-    
-    // Méthode pour importer des médias depuis XML (si nécessaire)
-    public static List<Media> importMediaFromXML(String filePath, MediaLibrary library) throws Exception {
-        List<Media> importedMedia = new ArrayList<>();
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder builder = factory.newDocumentBuilder();
-        Document doc = builder.parse(new File(filePath));
-        
-        NodeList mediaNodes = doc.getElementsByTagName("media");
-        MediaFactoryRegistry registry = MediaFactoryRegistry.getInstance();
-        
-        for (int i = 0; i < mediaNodes.getLength(); i++) {
-            Element mediaElem = (Element) mediaNodes.item(i);
-            String id = mediaElem.getAttribute("id");
-            String type = mediaElem.getAttribute("type");
-            String title = getElementText(mediaElem, "title");
-            String author = getElementText(mediaElem, "author");
-            int year = Integer.parseInt(getElementText(mediaElem, "year"));
-            String description = getElementText(mediaElem, "description");
-            
-            MediaFactory factoryObj = registry.getFactory(type);
-            Media media;
-            
-            if ("document".equals(type)) {
-                int pages = Integer.parseInt(getElementText(mediaElem, "pages"));
-                media = factoryObj.createMedia(id, title, author, year, description, pages);
-            } else if ("video".equals(type)) {
-                int duration = Integer.parseInt(getElementText(mediaElem, "duration"));
-                media = factoryObj.createMedia(id, title, author, year, description, duration);
-            } else if ("quiz".equals(type)) {
-                int duration = Integer.parseInt(getElementText(mediaElem, "duration"));
-                String difficulty = getElementText(mediaElem, "difficulty");
-                media = factoryObj.createMedia(id, title, author, year, description, duration, difficulty);
-            } else {
-                throw new IllegalArgumentException("Unknown media type: " + type);
-            }
-            
-            // Ajouter les sujets
-            NodeList subjectNodes = mediaElem.getElementsByTagName("subject");
-            for (int j = 0; j < subjectNodes.getLength(); j++) {
-                String subjectCode = subjectNodes.item(j).getTextContent();
-                Subject subject = library.getSubject(subjectCode);
-                if (subject != null) {
-                    media.addSubject(subject);
-                }
-            }
-            
-            importedMedia.add(media);
-        }
-        
-        return importedMedia;
-    }
-    
-    private static String getElementText(Element parent, String tagName) {
-        NodeList nodes = parent.getElementsByTagName(tagName);
-        if (nodes.getLength() > 0) {
-            return nodes.item(0).getTextContent();
-        }
-        return "";
     }
 }
