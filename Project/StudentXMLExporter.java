@@ -90,23 +90,6 @@ public class StudentXMLExporter {
         return false;
     }
 
-    private static Element getOrCreateSpecialiteElement(Document doc, Element root, Specialty specialty) {
-        // Chercher si la spécialité existe déjà
-        NodeList specialites = root.getElementsByTagName("specialite");
-        for (int i = 0; i < specialites.getLength(); i++) {
-            Element specialite = (Element) specialites.item(i);
-            if (specialite.getAttribute("nom").equals(specialty.getName())) {
-                return specialite;
-            }
-        }
-
-        // Si elle n'existe pas, la créer
-        Element specialiteElem = doc.createElement("specialite");
-        specialiteElem.setAttribute("nom", specialty.getName());
-        root.appendChild(specialiteElem);
-        return specialiteElem;
-    }
-
     public static void appendStudentToXML(Student student, String filePath) throws Exception {
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -116,53 +99,47 @@ public class StudentXMLExporter {
 
             File file = new File(filePath);
 
-            System.out.println("Chemin du fichier: " + file.getAbsolutePath());
-            System.out.println("Fichier existe: " + file.exists());
-
             // Si le fichier existe, on le lit et on l'utilise comme base
             if (file.exists()) {
                 try {
                     doc = builder.parse(file);
-                    System.out.println("Fichier XML parsé avec succès");
-                } catch (Exception e) {
-                    System.err.println("Erreur lors du parsing du fichier XML: " + e.getMessage());
-
-                    // Tentative de récupération: créer un nouveau document
-                    System.out.println("Création d'un nouveau document XML...");
-                    doc = builder.newDocument();
-                    root = doc.createElement("issae");
-                    doc.appendChild(root);
-
-                    JOptionPane.showMessageDialog(null,
-                            "Le fichier XML existant était corrompu. Un nouveau fichier a été créé.",
-                            "Avertissement",
-                            JOptionPane.WARNING_MESSAGE);
-                }
-
-                if (doc == null) {
-                    doc = builder.newDocument();
-                    root = doc.createElement("issae");
-                    doc.appendChild(root);
-                } else {
                     root = doc.getDocumentElement();
 
                     // Vérifier que la racine est bien "issae"
-                    if (root == null || !root.getNodeName().equals("issae")) {
-                        System.err.println("Format invalide. Création d'un nouveau document.");
-                        doc = builder.newDocument();
-                        root = doc.createElement("issae");
-                        doc.appendChild(root);
+                    if (!root.getNodeName().equals("issae")) {
+                        throw new Exception("Format de fichier XML invalide : racine attendue 'issae'");
                     }
+                } catch (Exception e) {
+                    // Si le fichier est corrompu, créer un nouveau avec la structure issae
+                    System.err.println("Erreur lors du parsing du fichier XML: " + e.getMessage());
+                    System.out.println("Création d'un nouveau document XML avec structure issae...");
+                    doc = builder.newDocument();
+                    root = doc.createElement("issae");
+                    doc.appendChild(root);
+
+                    // Créer les sections par défaut
+                    Element adminsElem = doc.createElement("administrateurs");
+                    root.appendChild(adminsElem);
+
+                    Element mediaElem = doc.createElement("mediatheque");
+                    root.appendChild(mediaElem);
                 }
             } else {
-                // Si le fichier n'existe pas, créer un nouveau document
-                System.out.println("Création d'un nouveau fichier XML");
+                // Si le fichier n'existe pas, créer un nouveau document avec structure issae
+                System.out.println("Création d'un nouveau fichier XML avec structure issae");
                 doc = builder.newDocument();
                 root = doc.createElement("issae");
                 doc.appendChild(root);
+
+                // Créer les sections par défaut
+                Element adminsElem = doc.createElement("administrateurs");
+                root.appendChild(adminsElem);
+
+                Element mediaElem = doc.createElement("mediatheque");
+                root.appendChild(mediaElem);
             }
 
-            // Vérifier si l'étudiant existe déjà
+            // Vérifier si l'étudiant existe déjà dans le XML
             if (studentExistsInXML(doc, student.getUsername())) {
                 throw new Exception("Un étudiant avec le nom d'utilisateur '" + student.getUsername() +
                         "' existe déjà dans le fichier XML");
@@ -175,6 +152,8 @@ public class StudentXMLExporter {
             Element etudiantElem = doc.createElement("etudiant");
             etudiantElem.setAttribute("username", student.getUsername());
             etudiantElem.setAttribute("password", student.getPassword());
+            etudiantElem.setAttribute("nom", student.getNom());
+            etudiantElem.setAttribute("prenom", student.getPrenom());
             specialiteElem.appendChild(etudiantElem);
 
             // Ajouter les valeurs (sujets)
@@ -207,6 +186,44 @@ public class StudentXMLExporter {
         } catch (Exception e) {
             throw new Exception("Erreur inattendue lors de la sauvegarde XML: " + e.getMessage(), e);
         }
+    }
+
+    // Modifiez getOrCreateSpecialiteElement pour chercher dans la structure issae
+    private static Element getOrCreateSpecialiteElement(Document doc, Element root, Specialty specialty) {
+        // Chercher si la spécialité existe déjà parmi les enfants de la racine issae
+        NodeList specialites = root.getElementsByTagName("specialite");
+        for (int i = 0; i < specialites.getLength(); i++) {
+            Element specialite = (Element) specialites.item(i);
+            if (specialite.getAttribute("nom").equals(specialty.getName())) {
+                return specialite;
+            }
+        }
+
+        // Si elle n'existe pas, la créer et l'ajouter avant "administrateurs" si
+        // possible
+        Element specialiteElem = doc.createElement("specialite");
+        specialiteElem.setAttribute("nom", specialty.getName());
+
+        // Trouver où insérer (avant administrateurs)
+        NodeList children = root.getChildNodes();
+        Element adminsElem = null;
+        for (int i = 0; i < children.getLength(); i++) {
+            if (children.item(i) instanceof Element) {
+                Element elem = (Element) children.item(i);
+                if (elem.getTagName().equals("administrateurs")) {
+                    adminsElem = elem;
+                    break;
+                }
+            }
+        }
+
+        if (adminsElem != null) {
+            root.insertBefore(specialiteElem, adminsElem);
+        } else {
+            root.appendChild(specialiteElem);
+        }
+
+        return specialiteElem;
     }
 
     // Nouvelle méthode pour mettre à jour un étudiant existant

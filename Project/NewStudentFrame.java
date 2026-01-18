@@ -147,13 +147,13 @@ class NewStudentFrame extends JFrame {
 
     private void saveStudentToXML(Student student) {
         try {
-            StudentXMLExporter.appendStudentToXML(student, "universite_students.xml");
+            StudentXMLExporter.appendStudentToXML(student, "universite.xml");
 
             JOptionPane.showMessageDialog(this,
                     "Étudiant créé avec succès !\n\n" +
                             "Nom d'utilisateur: " + student.getUsername() + "\n" +
                             "Mot de passe: " + student.getPassword() + "\n" +
-                            "Sauvegardé dans: universite_students.xml",
+                            "Sauvegardé dans: universite.xml (format issae)",
                     "Succès",
                     JOptionPane.INFORMATION_MESSAGE);
 

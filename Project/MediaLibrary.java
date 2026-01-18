@@ -51,32 +51,48 @@ class MediaLibrary extends Observable {
         DocumentBuilder builder = factory.newDocumentBuilder();
         Document doc = builder.newDocument();
 
-        Element root = doc.createElement("mediaLibraryData");
+        // Créer l'élément racine "issae" au lieu de "mediaLibraryData"
+        Element root = doc.createElement("issae");
         doc.appendChild(root);
 
-        // Sauvegarder les étudiants
-        Element studentsElem = doc.createElement("students");
+        // 1. Section étudiants (comme dans StudentXMLExporter)
+        Map<Specialty, List<Student>> studentsBySpecialty = new HashMap<>();
         for (Student student : getAllStudents()) {
-            Element studentElem = doc.createElement("student");
-            studentElem.setAttribute("username", student.getUsername());
-            studentElem.setAttribute("password", student.getPassword());
-            studentElem.setAttribute("nom", student.getNom());
-            studentElem.setAttribute("prenom", student.getPrenom());
-            studentElem.setAttribute("specialty", student.getSpecialty().getName());
-            
-            for (Subject subject : student.getEnrolledSubjects()) {
-                Element subjectElem = doc.createElement("enrolledSubject");
-                subjectElem.setTextContent(subject.getCode());
-                studentElem.appendChild(subjectElem);
-            }
-            studentsElem.appendChild(studentElem);
+            Specialty specialty = student.getSpecialty();
+            studentsBySpecialty.computeIfAbsent(specialty, k -> new ArrayList<>()).add(student);
         }
-        root.appendChild(studentsElem);
 
-        // Sauvegarder les administrateurs
-        Element adminsElem = doc.createElement("administrators");
+        // Pour chaque spécialité
+        for (Map.Entry<Specialty, List<Student>> entry : studentsBySpecialty.entrySet()) {
+            Specialty specialty = entry.getKey();
+            List<Student> students = entry.getValue();
+
+            Element specialiteElem = doc.createElement("specialite");
+            specialiteElem.setAttribute("nom", specialty.getName());
+            root.appendChild(specialiteElem);
+
+            // Pour chaque étudiant
+            for (Student student : students) {
+                Element etudiantElem = doc.createElement("etudiant");
+                etudiantElem.setAttribute("username", student.getUsername());
+                etudiantElem.setAttribute("password", student.getPassword());
+                etudiantElem.setAttribute("nom", student.getNom());
+                etudiantElem.setAttribute("prenom", student.getPrenom());
+                specialiteElem.appendChild(etudiantElem);
+
+                // Ajouter les valeurs (sujets)
+                for (Subject subject : student.getEnrolledSubjects()) {
+                    Element valeurElem = doc.createElement("valeur");
+                    valeurElem.appendChild(doc.createTextNode(subject.getCode()));
+                    etudiantElem.appendChild(valeurElem);
+                }
+            }
+        }
+
+        // 2. Section administrateurs
+        Element adminsElem = doc.createElement("administrateurs");
         for (Administrator admin : getAllAdministrators()) {
-            Element adminElem = doc.createElement("administrator");
+            Element adminElem = doc.createElement("administrateur");
             adminElem.setAttribute("username", admin.getUsername());
             adminElem.setAttribute("password", admin.getPassword());
             adminElem.setAttribute("nom", admin.getNom());
@@ -85,10 +101,10 @@ class MediaLibrary extends Observable {
         }
         root.appendChild(adminsElem);
 
-        // Sauvegarder les médias
-        Element mediaElem = doc.createElement("media");
+        // 3. Section médias (optionnel)
+        Element mediaElem = doc.createElement("mediatheque");
         for (Media media : getAllMedia()) {
-            Element mediaItemElem = doc.createElement("mediaItem");
+            Element mediaItemElem = doc.createElement("media");
             mediaItemElem.setAttribute("id", media.getId());
             mediaItemElem.setAttribute("type", media.getType());
             mediaItemElem.setAttribute("title", media.getTitle());
@@ -96,14 +112,14 @@ class MediaLibrary extends Observable {
             mediaItemElem.setAttribute("year", String.valueOf(media.getPublicationYear()));
             mediaItemElem.setAttribute("accessCount", String.valueOf(media.getAccessCount()));
             mediaItemElem.setAttribute("description", media.getDescription());
-            
+
             // Ajouter les sujets du média
             for (Subject subject : media.getSubjects()) {
                 Element subjectElem = doc.createElement("subject");
                 subjectElem.setTextContent(subject.getCode());
                 mediaItemElem.appendChild(subjectElem);
             }
-            
+
             // Ajouter les détails spécifiques
             if (media instanceof DocumentMedia) {
                 mediaItemElem.setAttribute("pageCount", String.valueOf(((DocumentMedia) media).getPageCount()));
@@ -113,7 +129,7 @@ class MediaLibrary extends Observable {
                 mediaItemElem.setAttribute("duration", String.valueOf(((OnlineQuiz) media).getEstimatedDuration()));
                 mediaItemElem.setAttribute("difficulty", ((OnlineQuiz) media).getDifficultyLevel());
             }
-            
+
             mediaElem.appendChild(mediaItemElem);
         }
         root.appendChild(mediaElem);
@@ -124,6 +140,7 @@ class MediaLibrary extends Observable {
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
         transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
         transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+        transformer.setOutputProperty(OutputKeys.STANDALONE, "yes");
 
         DOMSource source = new DOMSource(doc);
         StreamResult result = new StreamResult(new File(filePath));
@@ -132,128 +149,127 @@ class MediaLibrary extends Observable {
 
     // Méthode pour charger toutes les données depuis XML
     public void loadAllDataFromXML(String filePath) throws Exception {
-    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-    DocumentBuilder builder = factory.newDocumentBuilder();
-    Document doc = builder.parse(new File(filePath));
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        Document doc = builder.parse(new File(filePath));
+        Element root = doc.getDocumentElement();
 
-    // 1. Charger les étudiants (fusion)
-    NodeList studentNodes = doc.getElementsByTagName("student");
-    for (int i = 0; i < studentNodes.getLength(); i++) {
-        Element studentElem = (Element) studentNodes.item(i);
-        String username = studentElem.getAttribute("username");
-        String password = studentElem.getAttribute("password");
-        String nom = studentElem.getAttribute("nom");
-        String prenom = studentElem.getAttribute("prenom");
-        String specialtyName = studentElem.getAttribute("specialty");
-
-        // Vérifier si l'étudiant existe déjà
-        Student existingStudent = studentMap.get(username);
-        if (existingStudent != null) {
-            // L'étudiant existe déjà, on peut choisir de sauter ou de mettre à jour
-            // Ici, on choisit de sauter pour éviter les doublons
-            System.out.println("Student " + username + " already exists. Skipping...");
-            continue;
+        if (!root.getNodeName().equals("issae")) {
+            throw new Exception("Format de fichier XML invalide : racine attendue 'issae'");
         }
 
-        // Créer ou récupérer la spécialité
-        Specialty specialty = getSpecialty(specialtyName);
-        if (specialty == null) {
-            specialty = new Specialty(specialtyName);
-            addSpecialty(specialty);
-        }
+        // 1. Charger les étudiants
+        NodeList specialiteNodes = root.getElementsByTagName("specialite");
+        for (int i = 0; i < specialiteNodes.getLength(); i++) {
+            Element specialiteElem = (Element) specialiteNodes.item(i);
+            String specialtyName = specialiteElem.getAttribute("nom");
 
-        Student student = new Student(username, password, nom, prenom, specialty);
-
-        // Ajouter les sujets
-        NodeList subjectNodes = studentElem.getElementsByTagName("enrolledSubject");
-        for (int j = 0; j < subjectNodes.getLength(); j++) {
-            String subjectCode = subjectNodes.item(j).getTextContent();
-            Subject subject = getSubject(subjectCode);
-            if (subject == null) {
-                subject = new Subject(subjectCode, subjectCode, specialty);
-                addSubject(subject);
-                specialty.addSubject(subject);
+            Specialty specialty = getSpecialty(specialtyName);
+            if (specialty == null) {
+                specialty = new Specialty(specialtyName);
+                addSpecialty(specialty);
             }
-            student.enrollInSubject(subject);
-        }
 
-        addStudent(student);
-    }
+            NodeList etudiantNodes = specialiteElem.getElementsByTagName("etudiant");
+            for (int j = 0; j < etudiantNodes.getLength(); j++) {
+                Element etudiantElem = (Element) etudiantNodes.item(j);
+                String username = etudiantElem.getAttribute("username");
+                String password = etudiantElem.getAttribute("password");
+                String nom = etudiantElem.getAttribute("nom");
+                String prenom = etudiantElem.getAttribute("prenom");
 
-    // 2. Charger les administrateurs (fusion)
-    NodeList adminNodes = doc.getElementsByTagName("administrator");
-    for (int i = 0; i < adminNodes.getLength(); i++) {
-        Element adminElem = (Element) adminNodes.item(i);
-        String username = adminElem.getAttribute("username");
-        String password = adminElem.getAttribute("password");
-        String nom = adminElem.getAttribute("nom");
-        String prenom = adminElem.getAttribute("prenom");
-
-        // Vérifier si l'administrateur existe déjà
-        Administrator existingAdmin = adminMap.get(username);
-        if (existingAdmin != null) {
-            System.out.println("Administrator " + username + " already exists. Skipping...");
-            continue;
-        }
-
-        Administrator admin = new Administrator(username, password, nom, prenom);
-        addAdministrator(admin);
-    }
-
-    // 3. Charger les médias (fusion)
-    NodeList mediaNodes = doc.getElementsByTagName("mediaItem");
-    for (int i = 0; i < mediaNodes.getLength(); i++) {
-        Element mediaElem = (Element) mediaNodes.item(i);
-        String id = mediaElem.getAttribute("id");
-        String type = mediaElem.getAttribute("type");
-        String title = mediaElem.getAttribute("title");
-        String author = mediaElem.getAttribute("author");
-        int year = Integer.parseInt(mediaElem.getAttribute("year"));
-        String description = mediaElem.getAttribute("description");
-
-        // Vérifier si le média existe déjà
-        Media existingMedia = mediaMap.get(id);
-        if (existingMedia != null) {
-            System.out.println("Media " + id + " already exists. Skipping...");
-            continue;
-        }
-
-        Media media = null;
-        MediaFactory factoryInstance = MediaFactoryRegistry.getInstance().getFactory(type);
-
-        if ("Document".equals(type)) {
-            int pageCount = Integer.parseInt(mediaElem.getAttribute("pageCount"));
-            media = factoryInstance.createMedia(id, title, author, year, description, pageCount);
-        } else if ("Video Session".equals(type)) {
-            int duration = Integer.parseInt(mediaElem.getAttribute("duration"));
-            media = factoryInstance.createMedia(id, title, author, year, description, duration);
-        } else if ("Online Quiz".equals(type)) {
-            int duration = Integer.parseInt(mediaElem.getAttribute("duration"));
-            String difficulty = mediaElem.getAttribute("difficulty");
-            media = factoryInstance.createMedia(id, title, author, year, description, duration, difficulty);
-        }
-
-        if (media != null) {
-            // Ajouter les sujets au média
-            NodeList subjectNodes = mediaElem.getElementsByTagName("subject");
-            for (int j = 0; j < subjectNodes.getLength(); j++) {
-                String subjectCode = subjectNodes.item(j).getTextContent();
-                Subject subject = getSubject(subjectCode);
-                if (subject != null) {
-                    media.addSubject(subject);
+                // Vérifier si l'étudiant existe déjà
+                if (studentMap.get(username) != null) {
+                    continue;
                 }
+
+                Student student = new Student(username, password, nom, prenom, specialty);
+
+                // Charger les sujets (valeurs)
+                NodeList valeurNodes = etudiantElem.getElementsByTagName("valeur");
+                for (int k = 0; k < valeurNodes.getLength(); k++) {
+                    String subjectCode = valeurNodes.item(k).getTextContent();
+                    Subject subject = getSubject(subjectCode);
+                    if (subject == null) {
+                        subject = new Subject(subjectCode, subjectCode, specialty);
+                        addSubject(subject);
+                        specialty.addSubject(subject);
+                    }
+                    student.enrollInSubject(subject);
+                }
+
+                addStudent(student);
+            }
+        }
+
+        // 2. Charger les administrateurs
+        NodeList adminNodes = root.getElementsByTagName("administrateur");
+        for (int i = 0; i < adminNodes.getLength(); i++) {
+            Element adminElem = (Element) adminNodes.item(i);
+            String username = adminElem.getAttribute("username");
+            String password = adminElem.getAttribute("password");
+            String nom = adminElem.getAttribute("nom");
+            String prenom = adminElem.getAttribute("prenom");
+
+            // Vérifier si l'administrateur existe déjà
+            if (adminMap.get(username) == null) {
+                Administrator admin = new Administrator(username, password, nom, prenom);
+                addAdministrator(admin);
+            }
+        }
+
+        // 3. Charger les médias (optionnel)
+        NodeList mediaNodes = root.getElementsByTagName("media");
+        for (int i = 0; i < mediaNodes.getLength(); i++) {
+            Element mediaElem = (Element) mediaNodes.item(i);
+            String id = mediaElem.getAttribute("id");
+            String type = mediaElem.getAttribute("type");
+            String title = mediaElem.getAttribute("title");
+            String author = mediaElem.getAttribute("author");
+            int year = Integer.parseInt(mediaElem.getAttribute("year"));
+            String description = mediaElem.getAttribute("description");
+
+            // Vérifier si le média existe déjà
+            if (mediaMap.get(id) != null) {
+                continue;
             }
 
-            // Restaurer le compteur d'accès
-            int accessCount = Integer.parseInt(mediaElem.getAttribute("accessCount"));
-            for (int j = 0; j < accessCount; j++) {
-                media.incrementAccessCount();
+            Media media = null;
+            MediaFactory factoryInstance = MediaFactoryRegistry.getInstance().getFactory(type);
+
+            if ("Document".equals(type)) {
+                int pageCount = Integer.parseInt(mediaElem.getAttribute("pageCount"));
+                media = factoryInstance.createMedia(id, title, author, year, description, pageCount);
+            } else if ("Video Session".equals(type)) {
+                int duration = Integer.parseInt(mediaElem.getAttribute("duration"));
+                media = factoryInstance.createMedia(id, title, author, year, description, duration);
+            } else if ("Online Quiz".equals(type)) {
+                int duration = Integer.parseInt(mediaElem.getAttribute("duration"));
+                String difficulty = mediaElem.getAttribute("difficulty");
+                media = factoryInstance.createMedia(id, title, author, year, description, duration, difficulty);
             }
-            addMedia(media);
+
+            if (media != null) {
+                // Ajouter les sujets au média
+                NodeList subjectNodes = mediaElem.getElementsByTagName("subject");
+                for (int j = 0; j < subjectNodes.getLength(); j++) {
+                    String subjectCode = subjectNodes.item(j).getTextContent();
+                    Subject subject = getSubject(subjectCode);
+                    if (subject != null) {
+                        media.addSubject(subject);
+                    }
+                }
+
+                // Restaurer le compteur d'accès
+                int accessCount = Integer.parseInt(mediaElem.getAttribute("accessCount"));
+                for (int j = 0; j < accessCount; j++) {
+                    media.incrementAccessCount();
+                }
+                addMedia(media);
             }
         }
     }
-    
+
     // Media operations
     public void addMedia(Media media) {
         mediaMap.put(media.getId(), media);
