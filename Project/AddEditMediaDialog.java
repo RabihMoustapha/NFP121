@@ -330,7 +330,7 @@ class AddEditMediaDialog extends JDialog {
             // Sauvegarder
             try {
                 library.saveAllDataToXML("universite.xml");
-                library.saveToBinary("library_data.dat");
+                library.saveToBinary("universite.dat");
             } catch (Exception e) {
                 System.out.println("Erreur de sauvegarde: " + e.getMessage());
             }

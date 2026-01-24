@@ -162,7 +162,7 @@ class AdminMainFrame extends JFrame {
                     library.removeMedia(id);
                     try {
                         library.saveAllDataToXML("universite.xml");
-                        library.saveToBinary("library_data.dat");
+                        library.saveToBinary("universite.dat");
                         loadMediaData();
                         JOptionPane.showMessageDialog(this, "Média supprimé avec succès.");
                     } catch (Exception ex) {

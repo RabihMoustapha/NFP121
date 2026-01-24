@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <issae>
   <specialite nom="Mathematiques">
-    <etudiant nom="Rodrigo" password="RL" prenom="LeMalin" username="RL">
+    <etudiant password="RL" username="RL">
       <valeur>NFA032</valeur>
     </etudiant>
-    <etudiant nom="Rabih" password="RM" prenom="Moustapha" username="RM">
+    <etudiant password="RM" username="RM">
       <valeur>NFA032</valeur>
     </etudiant>
   </specialite>
@@ -12,5 +12,12 @@
     <administrateur nom="Admin" password="admin" prenom="System" username="admin"/>
     <administrateur nom="Rabih" password="RabihMoustapha" prenom="Moustapha" username="RabihMoustapha"/>
   </administrateurs>
-  <mediatheque/>
+  <mediatheque>
+    <media accessCount="0" author="Rabih" description="La description" id="1112" pageCount="4" title="Le Titre" type="Document" year="2004">
+      <subject>NFA032</subject>
+    </media>
+    <media accessCount="0" author="Rabih" description="Description here" id="1111" pageCount="4" title="Titre" type="Document" year="2004">
+      <subject>NFA032</subject>
+    </media>
+  </mediatheque>
 </issae>
