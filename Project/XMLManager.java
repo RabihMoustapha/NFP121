@@ -7,7 +7,7 @@ import javax.xml.transform.dom.*;
 import javax.xml.transform.stream.*;
 import org.w3c.dom.*;
 
-class UniversityXMLManager {
+class XMLManager {
     private static final String XML_FILE = "universite.xml";
 
     // Load all data from XML
