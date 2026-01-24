@@ -13,8 +13,19 @@ abstract class Observable {
         observers.remove(o);
     }
 
+    public void clearObservers() {
+        observers.clear();
+    }
+
     public void notifyObservers(Object info) {
-        for (Observer o : observers)
+        // Créer une copie de la liste pour éviter ConcurrentModificationException
+        List<Observer> observersCopy = new ArrayList<>(observers);
+        for (Observer o : observersCopy) {
             o.update(info);
+        }
+    }
+
+    public int countObservers() {
+        return observers.size();
     }
 }

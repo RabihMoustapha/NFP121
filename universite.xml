@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <issae>
   <specialite nom="Mathematiques">
+    <etudiant nom="Rodrigo" password="RL" prenom="LeMalin" username="RL">
+      <valeur>NFA032</valeur>
+    </etudiant>
     <etudiant nom="Rabih" password="RM" prenom="Moustapha" username="RM">
       <valeur>NFA032</valeur>
     </etudiant>

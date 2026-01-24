@@ -1,167 +1,226 @@
-import java.awt.*;
 import javax.swing.*;
-import java.io.File;
+import java.awt.*;
+
 
 class NewStudentFrame extends JFrame {
     private JTextField nomField = new JTextField(15);
     private JTextField prenomField = new JTextField(15);
-    private JComboBox<String> specialiteCombo = new JComboBox<>();
-    private JComboBox<String> valeurCombo = new JComboBox<>(new String[] { "NFA032", "NFA035", "NFP121" });
+    private JComboBox<Specialty> specialiteCombo = new JComboBox<>();
+    private JList<Subject> subjectsList = new JList<>();
+    private DefaultListModel<Subject> subjectsModel = new DefaultListModel<>();
     private JTextField usernameField = new JTextField(15);
     private JPasswordField passwordField = new JPasswordField(15);
     private JButton saveButton = new JButton("Save");
     private JButton cancelButton = new JButton("Cancel");
     private MediaLibrary library;
+    private boolean usernameManuallyEdited = false;
 
     public NewStudentFrame(MediaLibrary library) {
         this.library = library;
         setTitle("New Student");
-        setSize(400, 350);
+        setSize(400, 450);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setLayout(new BorderLayout());
 
         // Initialiser les spécialités disponibles
         updateSpecialiteCombo();
+        
+        // Panel principal avec padding
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        JPanel form = new JPanel(new GridLayout(7, 2, 5, 5));
-        form.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        // Form panel
+        JPanel formPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(5, 5, 5, 5);
 
-        // Form fields
-        form.add(new JLabel("Nom:"));
-        form.add(nomField);
-        form.add(new JLabel("Prenom:"));
-        form.add(prenomField);
-        form.add(new JLabel("Specialite:"));
-        form.add(specialiteCombo);
-        form.add(new JLabel("Valeur:"));
-        form.add(valeurCombo);
-        form.add(new JLabel("Username:"));
-        form.add(usernameField);
-        form.add(new JLabel("Password:"));
-        form.add(passwordField);
+        // Nom
+        gbc.gridx = 0; gbc.gridy = 0;
+        formPanel.add(new JLabel("Nom:"), gbc);
+        gbc.gridx = 1;
+        formPanel.add(nomField, gbc);
+
+        // Prénom
+        gbc.gridx = 0; gbc.gridy = 1;
+        formPanel.add(new JLabel("Prénom:"), gbc);
+        gbc.gridx = 1;
+        formPanel.add(prenomField, gbc);
+
+        // Spécialité
+        gbc.gridx = 0; gbc.gridy = 2;
+        formPanel.add(new JLabel("Spécialité:"), gbc);
+        gbc.gridx = 1;
+        formPanel.add(specialiteCombo, gbc);
+
+        // Sujets disponibles
+        gbc.gridx = 0; gbc.gridy = 3;
+        formPanel.add(new JLabel("Sujets (Ctrl+click pour multiple):"), gbc);
+        gbc.gridx = 1;
+        subjectsList.setModel(subjectsModel);
+        subjectsList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        subjectsList.setVisibleRowCount(3);
+        formPanel.add(new JScrollPane(subjectsList), gbc);
+
+        // Username
+        gbc.gridx = 0; gbc.gridy = 4;
+        formPanel.add(new JLabel("Username:"), gbc);
+        gbc.gridx = 1;
+        formPanel.add(usernameField, gbc);
+
+        // Password
+        gbc.gridx = 0; gbc.gridy = 5;
+        formPanel.add(new JLabel("Password:"), gbc);
+        gbc.gridx = 1;
+        formPanel.add(passwordField, gbc);
+
+        mainPanel.add(formPanel);
 
         // Button panel
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         buttonPanel.add(saveButton);
         buttonPanel.add(cancelButton);
 
-        // Add components to frame
-        setLayout(new BorderLayout());
-        add(form, BorderLayout.CENTER);
+        // Add panels to frame
+        add(mainPanel, BorderLayout.CENTER);
         add(buttonPanel, BorderLayout.SOUTH);
 
         // Action listeners
         saveButton.addActionListener(e -> saveStudent());
-        cancelButton.addActionListener(e -> this.dispose());
+        cancelButton.addActionListener(e -> dispose());
 
-        // Auto-generate username
+        // Auto-générer le username quand nom ou prénom changent
         nomField.addActionListener(e -> generateUsername());
         prenomField.addActionListener(e -> generateUsername());
+        
+        // Marquer le username comme édité manuellement
+        usernameField.addActionListener(e -> usernameManuallyEdited = true);
+
+        // Mettre à jour les sujets quand la spécialité change
+        specialiteCombo.addActionListener(e -> updateSubjectsList());
+        
+        // Générer le username initial
+        generateUsername();
     }
 
     private void updateSpecialiteCombo() {
         specialiteCombo.removeAllItems();
-        // Ajouter des spécialités par défaut si la bibliothèque est vide
-        if (library.getAllSpecialties().isEmpty()) {
-            specialiteCombo.addItem("Informatique");
-            specialiteCombo.addItem("Mathematiques");
-            specialiteCombo.addItem("Physique");
-        } else {
-            // Récupérer les spécialités de la bibliothèque
-            for (Specialty specialty : library.getAllSpecialties()) {
-                specialiteCombo.addItem(specialty.getName());
+        for (Specialty specialty : library.getAllSpecialties()) {
+            specialiteCombo.addItem(specialty);
+        }
+        
+        if (library.getAllSpecialties().size() > 0) {
+            specialiteCombo.setSelectedIndex(0);
+            updateSubjectsList();
+        }
+    }
+
+    private void updateSubjectsList() {
+        subjectsModel.clear();
+        Specialty selectedSpecialty = (Specialty) specialiteCombo.getSelectedItem();
+        if (selectedSpecialty != null) {
+            for (Subject subject : library.getAllSubjects()) {
+                if (subject.getSpecialty().equals(selectedSpecialty)) {
+                    subjectsModel.addElement(subject);
+                }
             }
         }
     }
 
     private void generateUsername() {
-        String nom = nomField.getText().trim();
-        String prenom = prenomField.getText().trim();
-
-        if (!nom.isEmpty() && !prenom.isEmpty()) {
-            String username = (prenom.charAt(0) + nom).toLowerCase();
-            usernameField.setText(username);
+        if (!usernameManuallyEdited) {
+            String nom = nomField.getText().trim();
+            String prenom = prenomField.getText().trim();
+            
+            if (!nom.isEmpty() && !prenom.isEmpty()) {
+                String username = (prenom.charAt(0) + nom).toLowerCase();
+                // Nettoyer le username (enlever accents, espaces, etc.)
+                username = username.replaceAll("[^a-zA-Z0-9]", "");
+                usernameField.setText(username);
+            }
         }
     }
 
     private void saveStudent() {
-        String nom = nomField.getText().trim();
-        String prenom = prenomField.getText().trim();
-        String specialite = (String) specialiteCombo.getSelectedItem();
-        String valeur = (String) valeurCombo.getSelectedItem();
-        String username = usernameField.getText().trim();
-        String password = new String(passwordField.getPassword());
-
-        if (nom.isEmpty() || prenom.isEmpty() || username.isEmpty() || password.isEmpty()) {
-            JOptionPane.showMessageDialog(this,
-                    "Veuillez remplir tous les champs obligatoires",
-                    "Erreur",
-                    JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        // Vérifier si l'username existe déjà
-        if (library.authenticateStudent(username, password) != null ||
-                library.getAllStudents().stream().anyMatch(s -> s.getUsername().equals(username))) {
-            JOptionPane.showMessageDialog(this,
-                    "Ce nom d'utilisateur existe déjà",
-                    "Erreur",
-                    JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
         try {
-            // Créer ou récupérer la spécialité
-            Specialty specialtyObj = library.getSpecialty(specialite);
-            if (specialtyObj == null) {
-                specialtyObj = new Specialty(specialite);
-                library.addSpecialty(specialtyObj);
+            // Validation des champs
+            String nom = nomField.getText().trim();
+            String prenom = prenomField.getText().trim();
+            String username = usernameField.getText().trim();
+            String password = new String(passwordField.getPassword()).trim();
+            
+            if (nom.isEmpty() || prenom.isEmpty() || username.isEmpty() || password.isEmpty()) {
+                JOptionPane.showMessageDialog(this, 
+                    "Veuillez remplir tous les champs obligatoires.", 
+                    "Erreur", 
+                    JOptionPane.ERROR_MESSAGE);
+                return;
             }
-
-            // Créer ou récupérer le sujet
-            Subject subject = library.getSubject(valeur);
-            if (subject == null) {
-                subject = new Subject(valeur, valeur + " - " + specialite, specialtyObj);
-                library.addSubject(subject);
-                specialtyObj.addSubject(subject);
+            
+            // Vérifier si le username existe déjà
+            if (library.authenticateStudent(username, password) != null || 
+                library.authenticateAdministrator(username, password) != null) {
+                JOptionPane.showMessageDialog(this, 
+                    "Ce nom d'utilisateur existe déjà.", 
+                    "Erreur", 
+                    JOptionPane.ERROR_MESSAGE);
+                return;
             }
-
+            
+            Specialty selectedSpecialty = (Specialty) specialiteCombo.getSelectedItem();
+            if (selectedSpecialty == null) {
+                JOptionPane.showMessageDialog(this, 
+                    "Veuillez sélectionner une spécialité.", 
+                    "Erreur", 
+                    JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+            java.util.List<Subject> selectedSubjects = subjectsList.getSelectedValuesList();
+            if (selectedSubjects.isEmpty()) {
+                JOptionPane.showMessageDialog(this, 
+                    "Veuillez sélectionner au moins un sujet.", 
+                    "Erreur", 
+                    JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
             // Créer l'étudiant
-            Student student = new Student(username, password, nom, prenom, specialtyObj);
-            student.enrollInSubject(subject);
+            Student student = new Student(username, password, nom, prenom, selectedSpecialty);
+            
+            // Inscrire l'étudiant aux sujets sélectionnés
+            for (Subject subject : selectedSubjects) {
+                student.enrollInSubject(subject);
+            }
+            
+            // Ajouter l'étudiant à la bibliothèque
             library.addStudent(student);
-
+            
             // Sauvegarder dans XML
-            saveStudentToXML(student);
-
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this,
-                    "Erreur lors de la création de l'étudiant : " + ex.getMessage(),
-                    "Erreur",
-                    JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        this.dispose();
-    }
-
-    private void saveStudentToXML(Student student) {
-        try {
-            StudentXMLExporter.appendStudentToXML(student, "universite.xml");
-
-            JOptionPane.showMessageDialog(this,
-                    "Étudiant créé avec succès !\n\n" +
-                            "Nom d'utilisateur: " + student.getUsername() + "\n" +
-                            "Mot de passe: " + student.getPassword() + "\n" +
-                            "Sauvegardé dans: universite.xml (format issae)",
+            try {
+                library.saveAllDataToXML("universite.xml");
+                JOptionPane.showMessageDialog(this,
+                    "Étudiant créé avec succès!\n\n" +
+                    "Username: " + username + "\n" +
+                    "Spécialité: " + selectedSpecialty.getName(),
                     "Succès",
                     JOptionPane.INFORMATION_MESSAGE);
-
+                dispose();
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this,
+                    "Étudiant créé mais erreur lors de la sauvegarde: " + ex.getMessage(),
+                    "Avertissement",
+                    JOptionPane.WARNING_MESSAGE);
+                dispose();
+            }
+            
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this,
-                    "Erreur lors de la sauvegarde dans le fichier XML : " + ex.getMessage(),
-                    "Erreur",
-                    JOptionPane.ERROR_MESSAGE);
+                "Erreur lors de la création de l'étudiant: " + ex.getMessage(),
+                "Erreur",
+                JOptionPane.ERROR_MESSAGE);
         }
     }
 }

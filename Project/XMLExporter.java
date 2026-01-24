@@ -1,20 +1,21 @@
+// XMLExporter.java
 import java.io.*;
 import java.util.List;
 import javax.xml.parsers.*;
 import javax.xml.transform.*;
 import javax.xml.transform.dom.*;
 import javax.xml.transform.stream.*;
-import org.w3c.dom.Element;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 class XMLExporter implements Exporter {
     @Override
     public void export(List<Media> mediaList, String filePath) throws Exception {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
-        Document doc = builder.newDocument();
 
-        Element root = doc.createElement("mediaLibrary");
+        Document doc = builder.newDocument();
+        Element root = doc.createElement("medialibrary");
         doc.appendChild(root);
 
         for (Media media : mediaList) {
@@ -34,6 +35,7 @@ class XMLExporter implements Exporter {
                 subjElem.setTextContent(subject.getCode());
                 subjectsElem.appendChild(subjElem);
             }
+
             mediaElem.appendChild(subjectsElem);
             root.appendChild(mediaElem);
         }
@@ -49,8 +51,10 @@ class XMLExporter implements Exporter {
     }
 
     private void addElement(Document doc, Element parent, String name, String value) {
-        Element elem = doc.createElement(name);
-        elem.setTextContent(value);
-        parent.appendChild(elem);
+        if (value != null && !value.trim().isEmpty()) {
+            Element elem = doc.createElement(name);
+            elem.setTextContent(value);
+            parent.appendChild(elem);
+        }
     }
 }

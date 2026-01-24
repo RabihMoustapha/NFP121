@@ -105,7 +105,7 @@ src/
 │   │   └── Student.java
 │   └── Core/                      # Core system components
 │       ├── MediaLibrary.java
-│       ├── UniversityXMLManager.java
+│       ├── XMLManager.java
 │       ├── Specialty.java
 │       └── Subject.java
 ├── UI/                            # User interface classes
@@ -167,7 +167,7 @@ java -cp bin Demo
 ## 💾 Data Management
 
 ### **Persistence Layer**
-- **`UniversityXMLManager`** - Handles all data persistence
+- **`XMLManager`** - Handles all data persistence
 - XML-based storage for users, media, and access logs
 - Configurable file paths and backup systems
 

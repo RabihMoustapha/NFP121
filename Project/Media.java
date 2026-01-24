@@ -1,6 +1,6 @@
 import java.io.Serializable;
-import java.util.Set;
-import java.util.HashSet;
+import java.util.*;
+import java.util.Objects;
 
 abstract class Media implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -23,81 +23,40 @@ abstract class Media implements Serializable {
     }
 
     public abstract String getType();
-
     public abstract String getSpecificDetails();
 
     // Getters et setters
-    public String getId() {
-        return id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String t) {
-        title = t;
-    }
-
-    public String getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(String a) {
-        author = a;
-    }
-
-    public int getPublicationYear() {
-        return publicationYear;
-    }
-
-    public void setPublicationYear(int y) {
-        publicationYear = y;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String d) {
-        description = d;
-    }
-
-    public int getAccessCount() {
-        return accessCount;
-    }
-
-    public void incrementAccessCount() {
-        accessCount++;
-    }
-
-    public Set<Subject> getSubjects() {
-        return new HashSet<>(subjects);
-    }
-
-    public void addSubject(Subject s) {
-        subjects.add(s);
-    }
-
-    public void removeSubject(Subject s) {
-        subjects.remove(s);
-    }
-
-    public void clearSubjects() {
-        subjects.clear();
-    }
+    public String getId() { return id; }
+    public String getTitle() { return title; }
+    public void setTitle(String t) { title = t; }
+    public String getAuthor() { return author; }
+    public void setAuthor(String a) { author = a; }
+    public int getPublicationYear() { return publicationYear; }
+    public void setPublicationYear(int y) { publicationYear = y; }
+    public String getDescription() { return description; }
+    public void setDescription(String d) { description = d; }
+    public int getAccessCount() { return accessCount; }
+    public void incrementAccessCount() { accessCount++; }
+    public Set<Subject> getSubjects() { return new HashSet<>(subjects); }
+    public void addSubject(Subject s) { subjects.add(s); }
+    public void removeSubject(Subject s) { subjects.remove(s); }
+    public void clearSubjects() { subjects.clear(); }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (!(o instanceof Media))
-            return false;
-        return id.equals(((Media) o).id);
+        if (this == o) return true;
+        if (!(o instanceof Media)) return false;
+        Media media = (Media) o;
+        return Objects.equals(id, media.id);
     }
 
     @Override
     public int hashCode() {
-        return id.hashCode();
+        return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return title + " (" + id + ")";
     }
 }
