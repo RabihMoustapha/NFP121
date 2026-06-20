@@ -5,11 +5,12 @@ import com.isae.medialibrary.service.factory.MediaFactory;
 import com.isae.medialibrary.service.factory.MediaFactoryRegistry;
 import com.isae.medialibrary.service.MediaLibrary;
 import com.isae.medialibrary.util.LogUtil;
-import java.util.logging.Logger;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class AddEditMediaDialog extends JDialog {
     private static final Logger logger = LogUtil.getLogger(AddEditMediaDialog.class);
@@ -306,7 +307,7 @@ public class AddEditMediaDialog extends JDialog {
             dispose();
 
         } catch (Exception e) {
-            logger.error("Error saving media", e);
+            logger.log(Level.SEVERE, "Error saving media", e);
             JOptionPane.showMessageDialog(this, "Erreur: " + e.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
         }
     }

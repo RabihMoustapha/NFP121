@@ -4,12 +4,12 @@ import com.isae.medialibrary.model.*;
 import com.isae.medialibrary.service.MediaLibrary;
 import com.isae.medialibrary.service.filter.*;
 import com.isae.medialibrary.util.LogUtil;
-import java.util.logging.Logger;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class StudentMainFrame extends JFrame {
     private static final Logger logger = LogUtil.getLogger(StudentMainFrame.class);

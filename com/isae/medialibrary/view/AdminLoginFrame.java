@@ -3,10 +3,10 @@ package com.isae.medialibrary.view;
 import com.isae.medialibrary.model.Administrator;
 import com.isae.medialibrary.service.MediaLibrary;
 import com.isae.medialibrary.util.LogUtil;
-import java.util.logging.Logger;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.logging.Logger;
 
 public class AdminLoginFrame extends JFrame {
     private static final Logger logger = LogUtil.getLogger(AdminLoginFrame.class);
@@ -56,12 +56,12 @@ public class AdminLoginFrame extends JFrame {
             }
             Administrator admin = library.authenticateAdministrator(username, password);
             if (admin != null) {
-                logger.info("Admin logged in: {}", admin.getUsername());
+                logger.info("Admin logged in: " + admin.getUsername());
                 dispose();
                 new AdminMainFrame(library).setVisible(true);
             } else {
                 JOptionPane.showMessageDialog(this, "Invalid credentials.");
-                logger.warn("Failed login attempt for user: {}", username);
+                logger.warning("Failed login attempt for user: " + username);
             }
         });
 

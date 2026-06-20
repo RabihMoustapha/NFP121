@@ -4,11 +4,12 @@ import com.isae.medialibrary.model.*;
 import com.isae.medialibrary.service.MediaLibrary;
 import com.isae.medialibrary.service.PasswordUtil;
 import com.isae.medialibrary.util.LogUtil;
-import java.util.logging.Logger;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class NewStudentFrame extends JFrame {
     private static final Logger logger = LogUtil.getLogger(NewStudentFrame.class);
@@ -171,7 +172,7 @@ public class NewStudentFrame extends JFrame {
             dispose();
 
         } catch (Exception ex) {
-            logger.error("Error creating student", ex);
+            logger.log(Level.SEVERE, "Error creating student", ex);
             JOptionPane.showMessageDialog(this, "Erreur: " + ex.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
         }
     }

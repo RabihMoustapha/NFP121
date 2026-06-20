@@ -5,9 +5,10 @@ import com.isae.medialibrary.persistence.XmlManager;
 import com.isae.medialibrary.service.filter.*;
 import com.isae.medialibrary.util.LogUtil;
 import com.isae.medialibrary.exception.*;
-import java.util.logging.Logger;
 
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class MediaLibrary {
     private static final Logger logger = LogUtil.getLogger(MediaLibrary.class);
@@ -24,7 +25,7 @@ public class MediaLibrary {
         try {
             XmlManager.loadAllData(this);
         } catch (Exception e) {
-            logger.error("Failed to load data", e);
+            logger.log(Level.SEVERE, "Failed to load data", e);
             throw new MediaLibraryException("Could not load data from XML", e);
         }
     }
@@ -33,7 +34,7 @@ public class MediaLibrary {
         try {
             XmlManager.saveAllData(this);
         } catch (Exception e) {
-            logger.error("Failed to save data", e);
+            logger.log(Level.SEVERE, "Failed to save data", e);
             throw new MediaLibraryException("Could not save data to XML", e);
         }
     }

@@ -8,13 +8,14 @@ import com.isae.medialibrary.service.MediaLibrary;
 import com.isae.medialibrary.service.filter.AuthorFilter;
 import com.isae.medialibrary.service.filter.TitleFilter;
 import com.isae.medialibrary.util.LogUtil;
-import java.util.logging.Logger;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.io.File;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class AdminMainFrame extends JFrame {
     private static final Logger logger = LogUtil.getLogger(AdminMainFrame.class);
@@ -118,7 +119,7 @@ public class AdminMainFrame extends JFrame {
                         loadMediaData();
                         JOptionPane.showMessageDialog(this, "Media deleted.");
                     } catch (Exception ex) {
-                        logger.error("Delete failed", ex);
+                        logger.log(Level.SEVERE, "Delete failed", ex);
                         JOptionPane.showMessageDialog(this, "Error deleting media: " + ex.getMessage());
                     }
                 }
@@ -209,7 +210,7 @@ public class AdminMainFrame extends JFrame {
                 exporter.export(library.getAllMedia(), path);
                 JOptionPane.showMessageDialog(this, "Export successful: " + path);
             } catch (Exception ex) {
-                logger.error("Export failed", ex);
+                logger.log(Level.SEVERE, "Export failed", ex);
                 JOptionPane.showMessageDialog(this, "Export failed: " + ex.getMessage());
             }
         }

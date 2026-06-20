@@ -3,14 +3,11 @@ package com.isae.medialibrary.view;
 import com.isae.medialibrary.model.Administrator;
 import com.isae.medialibrary.service.MediaLibrary;
 import com.isae.medialibrary.service.PasswordUtil;
-import com.isae.medialibrary.util.LogUtil;
-import java.util.logging.Logger;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class NewAdminFrame extends JFrame {
-    private static final Logger logger = LogUtil.getLogger(NewAdminFrame.class);
     private MediaLibrary library;
     private JTextField nomField = new JTextField(15);
     private JTextField prenomField = new JTextField(15);

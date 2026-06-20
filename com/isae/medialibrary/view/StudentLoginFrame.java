@@ -3,10 +3,10 @@ package com.isae.medialibrary.view;
 import com.isae.medialibrary.model.Student;
 import com.isae.medialibrary.service.MediaLibrary;
 import com.isae.medialibrary.util.LogUtil;
-import java.util.logging.Logger;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.logging.Logger;
 
 public class StudentLoginFrame extends JFrame {
     private static final Logger logger = LogUtil.getLogger(StudentLoginFrame.class);
@@ -56,12 +56,12 @@ public class StudentLoginFrame extends JFrame {
             }
             Student student = library.authenticateStudent(username, password);
             if (student != null) {
-                logger.info("Student logged in: {}", student.getUsername());
+                logger.info("Student logged in: " + student.getUsername());
                 dispose();
                 new StudentMainFrame(library, student).setVisible(true);
             } else {
                 JOptionPane.showMessageDialog(this, "Invalid credentials.");
-                logger.warn("Failed login attempt for user: {}", username);
+                logger.warning("Failed login attempt for user: " + username);
             }
         });
 
