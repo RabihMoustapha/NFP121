@@ -1,11 +1,12 @@
 package com.isae.medialibrary;
 
 import com.isae.medialibrary.service.MediaLibrary;
-import com.isae.medialibrary.view.*;
+import com.isae.medialibrary.view.AdminLoginFrame;
+import com.isae.medialibrary.view.StudentLoginFrame;
 import com.isae.medialibrary.util.LogUtil;
-import org.slf4j.Logger;
 
 import javax.swing.*;
+import java.util.logging.Logger;
 
 public class Main {
     private static final Logger logger = LogUtil.getLogger(Main.class);
