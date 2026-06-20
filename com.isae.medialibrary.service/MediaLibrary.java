@@ -2,7 +2,9 @@ package com.isae.medialibrary.service;
 
 import com.isae.medialibrary.model.*;
 import com.isae.medialibrary.persistence.XmlManager;
+import com.isae.medialibrary.service.filter.*;
 import com.isae.medialibrary.util.LogUtil;
+import com.isae.medialibrary.exception.*;
 import org.slf4j.Logger;
 
 import java.util.*;
@@ -15,7 +17,6 @@ public class MediaLibrary {
     private Map<String, Administrator> adminMap = new HashMap<>();
     private Map<String, Specialty> specialtyMap = new HashMap<>();
     private Map<String, Subject> subjectMap = new HashMap<>();
-
     private NotificationService notificationService = new NotificationService();
 
     // ========== Persistence ==========
@@ -95,7 +96,7 @@ public class MediaLibrary {
         Media media = mediaMap.get(id);
         if (media != null) {
             media.incrementAccessCount();
-            saveData(); // update access count
+            saveData();
         }
         return media;
     }
@@ -140,7 +141,7 @@ public class MediaLibrary {
         return new ArrayList<>(subjectMap.values());
     }
 
-    // ========== Search / Filters ==========
+    // ========== Search ==========
     public List<Media> searchMedia(FilterCriteria criteria) {
         List<Media> result = new ArrayList<>();
         for (Media media : mediaMap.values()) {
