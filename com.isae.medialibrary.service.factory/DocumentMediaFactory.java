@@ -1,0 +1,12 @@
+package com.isae.medialibrary.service.factory;
+
+import com.isae.medialibrary.model.DocumentMedia;
+import com.isae.medialibrary.model.Media;
+
+public class DocumentMediaFactory implements MediaFactory {
+    @Override
+    public Media createMedia(String id, String title, String author, int year, String desc, Object... params) {
+        if (params.length < 1) throw new IllegalArgumentException("Need page count");
+        return new DocumentMedia(id, title, author, year, desc, (Integer) params[0]);
+    }
+}
