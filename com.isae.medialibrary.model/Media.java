@@ -42,19 +42,19 @@ public abstract class Media implements Serializable {
     public abstract String getType();
     public abstract String getSpecificDetails();
 
-    // Getters and setters...
+    // Getters and setters
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
     public String getTitle() { return title; }
-    public void setTitle(String t) { title = t; }
+    public void setTitle(String title) { this.title = title; }
     public String getAuthor() { return author; }
-    public void setAuthor(String a) { author = a; }
+    public void setAuthor(String author) { this.author = author; }
     public int getPublicationYear() { return publicationYear; }
-    public void setPublicationYear(int y) { publicationYear = y; }
+    public void setPublicationYear(int year) { this.publicationYear = year; }
     public String getDescription() { return description; }
-    public void setDescription(String d) { description = d; }
+    public void setDescription(String description) { this.description = description; }
     public int getAccessCount() { return accessCount; }
-    public void setAccessCount(int c) { accessCount = c; }
+    public void setAccessCount(int accessCount) { this.accessCount = accessCount; }
     public void incrementAccessCount() { accessCount++; }
     public List<String> getSubjectCodes() { return subjectCodes; }
     public void setSubjectCodes(List<String> codes) { this.subjectCodes = codes; }

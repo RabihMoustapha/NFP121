@@ -12,18 +12,16 @@ public class Student implements Serializable {
     @XmlAttribute
     private String username;
     @XmlAttribute
-    private String password; // will store hash
+    private String password; // BCrypt hash
     private String nom;
     private String prenom;
 
-    // JAXB: we'll skip specialty reference via parent; but we can keep a transient reference.
     @XmlTransient
     private Specialty specialty;
 
     @XmlElement(name = "valeur")
     private List<String> subjectCodes = new ArrayList<>();
 
-    // transient enrolled subjects (populated after loading)
     @XmlTransient
     private List<Subject> enrolledSubjects = new ArrayList<>();
 
@@ -36,19 +34,18 @@ public class Student implements Serializable {
         this.specialty = specialty;
     }
 
-    // Getters and setters...
     public String getUsername() { return username; }
-    public void setUsername(String username) { this.username = username; }
+    public void setUsername(String u) { username = u; }
     public String getPassword() { return password; }
-    public void setPassword(String password) { this.password = password; }
+    public void setPassword(String p) { password = p; }
     public String getNom() { return nom; }
-    public void setNom(String nom) { this.nom = nom; }
+    public void setNom(String n) { nom = n; }
     public String getPrenom() { return prenom; }
-    public void setPrenom(String prenom) { this.prenom = prenom; }
+    public void setPrenom(String p) { prenom = p; }
     public Specialty getSpecialty() { return specialty; }
-    public void setSpecialty(Specialty specialty) { this.specialty = specialty; }
+    public void setSpecialty(Specialty s) { specialty = s; }
     public List<String> getSubjectCodes() { return subjectCodes; }
-    public void setSubjectCodes(List<String> subjectCodes) { this.subjectCodes = subjectCodes; }
+    public void setSubjectCodes(List<String> codes) { this.subjectCodes = codes; }
     public List<Subject> getEnrolledSubjects() { return enrolledSubjects; }
     public void setEnrolledSubjects(List<Subject> subjects) { this.enrolledSubjects = subjects; }
 

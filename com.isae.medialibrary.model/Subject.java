@@ -12,7 +12,7 @@ public class Subject implements Serializable {
     @XmlAttribute
     private String name;
     @XmlTransient
-    private Specialty specialty; // we'll set after load
+    private Specialty specialty;
 
     public Subject() {}
     public Subject(String code, String name, Specialty specialty) {

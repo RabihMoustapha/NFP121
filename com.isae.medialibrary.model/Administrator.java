@@ -10,13 +10,14 @@ public class Administrator implements Serializable {
     @XmlAttribute
     private String username;
     @XmlAttribute
-    private String password; // hash
+    private String password; // BCrypt hash
     @XmlAttribute
     private String nom;
     @XmlAttribute
     private String prenom;
 
     public Administrator() {}
+
     public Administrator(String username, String passwordHash, String nom, String prenom) {
         this.username = username;
         this.password = passwordHash;
@@ -24,15 +25,14 @@ public class Administrator implements Serializable {
         this.prenom = prenom;
     }
 
-    // getters/setters...
     public String getUsername() { return username; }
-    public void setUsername(String u) { username = u; }
+    public void setUsername(String username) { this.username = username; }
     public String getPassword() { return password; }
-    public void setPassword(String p) { password = p; }
+    public void setPassword(String password) { this.password = password; }
     public String getNom() { return nom; }
-    public void setNom(String n) { nom = n; }
+    public void setNom(String nom) { this.nom = nom; }
     public String getPrenom() { return prenom; }
-    public void setPrenom(String p) { prenom = p; }
+    public void setPrenom(String prenom) { this.prenom = prenom; }
 
     @Override
     public boolean equals(Object o) {

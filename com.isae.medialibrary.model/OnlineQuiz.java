@@ -15,6 +15,7 @@ public class OnlineQuiz extends Media {
         this.estimatedDuration = duration;
         this.difficultyLevel = difficulty;
     }
+
     public int getEstimatedDuration() { return estimatedDuration; }
     public void setEstimatedDuration(int d) { estimatedDuration = d; }
     public String getDifficultyLevel() { return difficultyLevel; }

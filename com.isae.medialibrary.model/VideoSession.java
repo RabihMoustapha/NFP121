@@ -12,6 +12,7 @@ public class VideoSession extends Media {
         super(id, title, author, year, desc);
         this.durationMinutes = duration;
     }
+
     public int getDurationMinutes() { return durationMinutes; }
     public void setDurationMinutes(int d) { durationMinutes = d; }
     @Override public String getType() { return "Video Session"; }

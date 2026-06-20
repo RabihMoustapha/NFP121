@@ -12,8 +12,9 @@ public class DocumentMedia extends Media {
         super(id, title, author, year, desc);
         this.pageCount = pages;
     }
+
     public int getPageCount() { return pageCount; }
-    public void setPageCount(int p) { pageCount = p; }
+    public void setPageCount(int pageCount) { this.pageCount = pageCount; }
     @Override public String getType() { return "Document"; }
     @Override public String getSpecificDetails() { return "Pages: " + pageCount; }
 }
