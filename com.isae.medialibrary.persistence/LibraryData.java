@@ -23,10 +23,8 @@ public class LibraryData {
 
     public List<Specialty> getSpecialties() { return specialties; }
     public void setSpecialties(List<Specialty> specialties) { this.specialties = specialties; }
-
     public List<Administrator> getAdministrators() { return administrators; }
     public void setAdministrators(List<Administrator> administrators) { this.administrators = administrators; }
-
     public List<Media> getMediaList() { return mediaList; }
     public void setMediaList(List<Media> mediaList) { this.mediaList = mediaList; }
 }

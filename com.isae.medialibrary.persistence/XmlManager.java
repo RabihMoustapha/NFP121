@@ -1,6 +1,7 @@
 package com.isae.medialibrary.persistence;
 
 import com.isae.medialibrary.model.*;
+import com.isae.medialibrary.service.MediaLibrary;
 import com.isae.medialibrary.service.PasswordUtil;
 import com.isae.medialibrary.util.LogUtil;
 import org.slf4j.Logger;
@@ -19,11 +20,9 @@ public class XmlManager {
         // Specialties with their students
         List<Specialty> specialties = library.getAllSpecialties();
         for (Specialty spec : specialties) {
-            // Copy students into the specialty's student list
             List<Student> studentsInSpec = new ArrayList<>();
             for (Student s : library.getAllStudents()) {
                 if (s.getSpecialty().equals(spec)) {
-                    // Ensure password is hash, not plain
                     studentsInSpec.add(s);
                 }
             }
@@ -31,13 +30,9 @@ public class XmlManager {
         }
         data.setSpecialties(specialties);
 
-        // Administrators
         data.setAdministrators(library.getAllAdministrators());
-
-        // Media
         data.setMediaList(library.getAllMedia());
 
-        // Marshal
         JAXBContext context = JAXBContext.newInstance(LibraryData.class, Specialty.class, Student.class,
                 Administrator.class, DocumentMedia.class, VideoSession.class, OnlineQuiz.class);
         Marshaller marshaller = context.createMarshaller();
@@ -61,19 +56,9 @@ public class XmlManager {
         Unmarshaller unmarshaller = context.createUnmarshaller();
         LibraryData data = (LibraryData) unmarshaller.unmarshal(file);
 
-        // Clear existing data in library
         library.clear();
 
-        // Map for subjects by code
         Map<String, Subject> subjectMap = new HashMap<>();
-
-        // First, load all specialties and create subjects
-        for (Specialty spec : data.getSpecialties()) {
-            library.addSpecialty(spec);
-            // Create subjects from students? In original XML, subjects are only in student's valeur.
-            // We need to collect unique subject codes and create Subject objects.
-            // We'll create them on the fly.
-        }
 
         // Build subjects from all student subject codes
         Set<String> subjectCodes = new HashSet<>();
@@ -83,19 +68,17 @@ public class XmlManager {
             }
         }
         for (String code : subjectCodes) {
-            Subject subject = new Subject(code, code, null); // name = code initially
-            // We'll assign specialty later if needed
+            Subject subject = new Subject(code, code, null);
             library.addSubject(subject);
             subjectMap.put(code, subject);
         }
 
-        // Now load students, linking to specialty and subjects
+        // Load students
         for (Specialty spec : data.getSpecialties()) {
             Specialty librarySpec = library.getSpecialty(spec.getNom());
             for (Student student : spec.getStudents()) {
-                // Ensure password is hashed (if not already)
                 String pwd = student.getPassword();
-                if (!pwd.startsWith("$2a$")) { // not BCrypt hash
+                if (!pwd.startsWith("$2a$")) {
                     student.setPassword(PasswordUtil.hashPassword(pwd));
                 }
                 student.setSpecialty(librarySpec);
@@ -125,7 +108,6 @@ public class XmlManager {
 
         // Load media
         for (Media media : data.getMediaList()) {
-            // Link subjects
             List<Subject> subjects = new ArrayList<>();
             for (String code : media.getSubjectCodes()) {
                 Subject s = subjectMap.get(code);
@@ -139,13 +121,11 @@ public class XmlManager {
     }
 
     private static void createDefaultData(MediaLibrary library) {
-        // Create specialties
         Specialty info = new Specialty("Informatique");
         Specialty math = new Specialty("Mathematiques");
         library.addSpecialty(info);
         library.addSpecialty(math);
 
-        // Subjects
         Subject nfp121 = new Subject("NFP121", "Programmation Avancée", info);
         Subject nfa035 = new Subject("NFA035", "Structures de Données", info);
         Subject nfa032 = new Subject("NFA032", "Circuits Électroniques", math);
@@ -153,7 +133,6 @@ public class XmlManager {
         library.addSubject(nfa035);
         library.addSubject(nfa032);
 
-        // Students
         Student s1 = new Student("etudiant1", PasswordUtil.hashPassword("pass123"), "Dupont", "Jean", info);
         s1.getSubjectCodes().add("NFP121");
         s1.getSubjectCodes().add("NFA035");
@@ -165,11 +144,9 @@ public class XmlManager {
         s2.setEnrolledSubjects(List.of(nfp121));
         library.addStudent(s2);
 
-        // Admin
         Administrator admin = new Administrator("admin", PasswordUtil.hashPassword("admin123"), "Admin", "System");
         library.addAdministrator(admin);
 
-        // Media (example)
         DocumentMedia doc = new DocumentMedia("DOC001", "Concepts de Généricité", "Prof. Smith", 2024,
                 "Document sur les génériques en Java", 45);
         doc.addSubject(nfp121);
