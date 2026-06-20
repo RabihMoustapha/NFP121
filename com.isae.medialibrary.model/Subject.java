@@ -1,26 +1,33 @@
 package com.isae.medialibrary.model;
 
+import javax.xml.bind.annotation.*;
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
 
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Subject implements Serializable {
     private static final long serialVersionUID = 1L;
-    private String code;
-    private String name;
-    private Specialty specialty;
-    private Set<Media> mediaList = new HashSet<>();
 
+    @XmlAttribute
+    private String code;
+    @XmlAttribute
+    private String name;
+    @XmlTransient
+    private Specialty specialty; // we'll set after load
+
+    public Subject() {}
     public Subject(String code, String name, Specialty specialty) {
         this.code = code;
         this.name = name;
         this.specialty = specialty;
     }
+
     public String getCode() { return code; }
+    public void setCode(String code) { this.code = code; }
     public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
     public Specialty getSpecialty() { return specialty; }
-    public Set<Media> getMediaList() { return new HashSet<>(mediaList); }
-    public void addMedia(Media m) { mediaList.add(m); }
+    public void setSpecialty(Specialty specialty) { this.specialty = specialty; }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

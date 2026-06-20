@@ -1,26 +1,38 @@
 package com.isae.medialibrary.model;
 
+import javax.xml.bind.annotation.*;
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Specialty implements Serializable {
     private static final long serialVersionUID = 1L;
-    private String name;
-    private Set<Subject> subjects = new HashSet<>();
 
-    public Specialty(String name) { this.name = name; }
-    public String getName() { return name; }
-    public Set<Subject> getSubjects() { return new HashSet<>(subjects); }
-    public void addSubject(Subject s) { subjects.add(s); }
+    @XmlAttribute
+    private String nom;
+
+    @XmlElement(name = "etudiant")
+    private List<Student> students = new ArrayList<>();
+
+    // JAXB needs no-arg constructor
+    public Specialty() {}
+    public Specialty(String nom) { this.nom = nom; }
+
+    public String getNom() { return nom; }
+    public void setNom(String nom) { this.nom = nom; }
+
+    public List<Student> getStudents() { return students; }
+    public void setStudents(List<Student> students) { this.students = students; }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Specialty)) return false;
-        return name.equals(((Specialty) o).name);
+        return nom.equals(((Specialty) o).nom);
     }
     @Override
-    public int hashCode() { return name.hashCode(); }
+    public int hashCode() { return nom.hashCode(); }
     @Override
-    public String toString() { return name; }
+    public String toString() { return nom; }
 }
