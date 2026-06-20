@@ -1,17 +1,12 @@
 package com.isae.medialibrary.model;
 
-import javax.xml.bind.annotation.*;
 import java.io.Serializable;
 
-@XmlAccessorType(XmlAccessType.FIELD)
 public class Subject implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @XmlAttribute
     private String code;
-    @XmlAttribute
     private String name;
-    @XmlTransient
     private Specialty specialty;
 
     public Subject() {}

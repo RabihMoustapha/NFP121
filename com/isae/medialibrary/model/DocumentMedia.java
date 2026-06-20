@@ -1,10 +1,6 @@
 package com.isae.medialibrary.model;
 
-import javax.xml.bind.annotation.*;
-
-@XmlAccessorType(XmlAccessType.FIELD)
 public class DocumentMedia extends Media {
-    @XmlAttribute(name = "pageCount")
     private int pageCount;
 
     public DocumentMedia() {}

@@ -1,18 +1,13 @@
 package com.isae.medialibrary.model;
 
-import javax.xml.bind.annotation.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-@XmlAccessorType(XmlAccessType.FIELD)
 public class Specialty implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @XmlAttribute
     private String nom;
-
-    @XmlElement(name = "etudiant")
     private List<Student> students = new ArrayList<>();
 
     public Specialty() {}

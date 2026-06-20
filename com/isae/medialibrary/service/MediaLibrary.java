@@ -5,7 +5,7 @@ import com.isae.medialibrary.persistence.XmlManager;
 import com.isae.medialibrary.service.filter.*;
 import com.isae.medialibrary.util.LogUtil;
 import com.isae.medialibrary.exception.*;
-import org.slf4j.Logger;
+import java.util.logging.Logger;
 
 import java.util.*;
 

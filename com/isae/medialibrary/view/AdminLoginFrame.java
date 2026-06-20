@@ -3,7 +3,7 @@ package com.isae.medialibrary.view;
 import com.isae.medialibrary.model.Administrator;
 import com.isae.medialibrary.service.MediaLibrary;
 import com.isae.medialibrary.util.LogUtil;
-import org.slf4j.Logger;
+import java.util.logging.Logger;
 
 import javax.swing.*;
 import java.awt.*;

@@ -1,19 +1,13 @@
 package com.isae.medialibrary.model;
 
-import javax.xml.bind.annotation.*;
 import java.io.Serializable;
 
-@XmlAccessorType(XmlAccessType.FIELD)
 public class Administrator implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @XmlAttribute
     private String username;
-    @XmlAttribute
-    private String password; // BCrypt hash
-    @XmlAttribute
+    private String password; // SHA-256 hash
     private String nom;
-    @XmlAttribute
     private String prenom;
 
     public Administrator() {}

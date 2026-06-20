@@ -1,10 +1,6 @@
 package com.isae.medialibrary.model;
 
-import javax.xml.bind.annotation.*;
-
-@XmlAccessorType(XmlAccessType.FIELD)
 public class VideoSession extends Media {
-    @XmlAttribute(name = "duration")
     private int durationMinutes;
 
     public VideoSession() {}

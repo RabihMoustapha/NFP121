@@ -4,7 +4,7 @@ import com.isae.medialibrary.model.*;
 import com.isae.medialibrary.service.MediaLibrary;
 import com.isae.medialibrary.service.filter.*;
 import com.isae.medialibrary.util.LogUtil;
-import org.slf4j.Logger;
+import java.util.logging.Logger;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;

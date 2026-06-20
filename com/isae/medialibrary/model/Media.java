@@ -1,32 +1,20 @@
 package com.isae.medialibrary.model;
 
-import javax.xml.bind.annotation.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlSeeAlso({DocumentMedia.class, VideoSession.class, OnlineQuiz.class})
 public abstract class Media implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @XmlAttribute
     private String id;
-    @XmlAttribute
     private String title;
-    @XmlAttribute
     private String author;
-    @XmlAttribute(name = "year")
     private int publicationYear;
-    @XmlAttribute
     private String description;
-    @XmlAttribute(name = "accessCount")
     private int accessCount;
 
-    @XmlElement(name = "subject")
     private List<String> subjectCodes = new ArrayList<>();
-
-    @XmlTransient
     private List<Subject> subjects = new ArrayList<>();
 
     protected Media() {}
