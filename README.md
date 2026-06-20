@@ -1,251 +1,138 @@
-# Media Library System 🎓
+# Media Library Management System
 
-![Java](https://img.shields.io/badge/Java-17-blue)
-![License](https://img.shields.io/badge/license-MIT-green)
-![Design Patterns](https://img.shields.io/badge/patterns-factory%20|%20observer%20|%20strategy%20|%20filter-orange)
-![Status](https://img.shields.io/badge/status-complete-brightgreen)
+A comprehensive media library management application built with Java Swing. This system allows students and administrators to manage educational media resources such as documents, video sessions, and online quizzes.
 
-A comprehensive Java-based media management system implementing core design patterns for educational resource management in university environments.
+## 📖 Description
 
-## 📋 Table of Contents
-- [Overview](#-overview)
-- [✨ Key Features](#-key-features)
-- [🏗️ Architecture & Design Patterns](#️-architecture--design-patterns)
-- [📁 Project Structure](#-project-structure)
-- [🚀 Getting Started](#-getting-started)
-- [👥 User Roles](#-user-roles)
-- [💾 Data Management](#-data-management)
-- [📊 Reporting](#-reporting)
+The **Media Library** is a desktop application designed for educational institutions. It provides a centralized platform for storing, organizing, and accessing learning materials. The system supports two user roles:
 
-## 🎯 Overview
+- **Students** can browse, search, filter, and access media content relevant to their subjects and specialty.
+- **Administrators** have full CRUD (Create, Read, Update, Delete) capabilities, export data, view statistics, and manage user accounts.
 
-A Java desktop application for managing educational media resources in university settings. The system supports multiple media types (documents, videos, quizzes) with separate interfaces for administrators and students, implementing fundamental software design patterns for maintainability and extensibility.
+The application uses persistent storage via XML files and includes modern software design patterns for maintainability and scalability.
 
-**Primary Objectives:**
-- Manage diverse educational media types
-- Implement role-based access control
-- Demonstrate practical design pattern applications
-- Provide robust filtering and reporting capabilities
+## ✨ Features
 
-## ✨ Key Features
+### 🔐 User Management
+- Secure login for students and administrators with SHA‑256 password hashing.
+- Self‑registration for students (with specialty and subject selection).
+- Administrator account creation.
 
-### **Media Management**
-- Support for **DocumentMedia**, **VideoSession**, and **OnlineQuiz** types
-- Factory-based media creation and registration
-- Advanced filtering by author, subject, title with composite filters
-- Export functionality to CSV and XML formats
+### 📚 Media Management
+- Add, edit, delete, and view media items.
+- Supported media types:
+  - **Document** (with page count)
+  - **Video Session** (with duration in minutes)
+  - **Online Quiz** (with estimated duration and difficulty level)
+- Each media can be associated with multiple subjects.
 
-### **User Management**
-- Dual-role system: **Administrator** and **Student**
-- Separate authentication interfaces
-- Specialty-based student organization
-- Usage tracking and analytics
+### 🔍 Search & Filter
+- Search by title, author, or ID.
+- Advanced filtering using a composite filter pattern (e.g., subject‑based filtering).
+- Students can quickly filter media related to their enrolled subjects.
 
-### **System Features**
-- Observer pattern for notification systems
-- Strategy pattern for export functionality
-- XML-based data persistence
-- Comprehensive reporting dashboard
+### 📊 Statistics & Reporting
+- View total media and student counts.
+- Top 5 most‑accessed media items.
+- Export media list to **CSV** or **XML** format.
 
-## 🏗️ Architecture & Design Patterns
+### 📧 Notifications
+- Simulated email notification when new media is added, targeting students interested in the associated subjects.
 
-### **Factory Pattern** (`MediaFactory` Hierarchy)
-- **`MediaFactory`** - Abstract factory interface
-- **`DocumentMediaFactory`** - Document instance creation
-- **`VideoFactory`** - Video session creation  
-- **`QuizFactory`** - Quiz instance creation
-- **`MediaFactoryRegistry`** - Centralized factory management
+### 💾 Data Persistence
+- All data is stored in an `universite.xml` file using DOM parsing and JAXB.
+- Automatic loading and saving on application start/stop.
 
-### **Filter Pattern** (`FilterCriteria` Hierarchy)
-- **`FilterCriteria`** - Filter interface contract
-- **`FilterComposite`** - Logical filter combinations (AND/OR)
-- **`AuthorFilter`** - Author-based filtering
-- **`SubjectFilter`** - Subject-based filtering
-- **`TitleFilter`** - Title-based filtering
+## 🛠️ Technologies Used
 
-### **Observer Pattern**
-- **`Observable`** - Subject interface for state changes
-- **`Observer`** - Observer interface for notifications
-- Event-driven updates for system changes
+- **Java 8+** – Core language
+- **Swing** – Graphical user interface
+- **JAXB** – XML data binding (for some parts)
+- **DOM Parser** – Custom XML read/write
+- **SHA‑256** – Password hashing (via `MessageDigest`)
+- **Design Patterns**:
+  - Factory (`MediaFactory`, `MediaFactoryRegistry`)
+  - Composite (`FilterComposite`, `FilterCriteria`)
+  - Singleton (`MediaFactoryRegistry`)
+  - Strategy (exporters: `CSVExporter`, `XMLExporter`)
 
-### **Strategy Pattern**
-- **`Exporter`** - Export strategy interface
-- **`CSVExporter`** - CSV format export strategy
-- **`XMLExporter`** - XML format export strategy
+## 🚀 Getting Started
+
+### Prerequisites
+- Java Development Kit (JDK) 8 or higher
+- Any IDE (IntelliJ IDEA, Eclipse, NetBeans) or command‑line build tool
+
+### Running the Application
+
+1. **Clone the repository**  
+   ```bash
+   git clone https://github.com/yourusername/medialibrary.git
+   cd medialibrary
+   ```
+
+2. **Compile and run**  
+   You can run the project directly from your IDE by opening the `com.isae.medialibrary.Main` class.
+
+   Alternatively, if you have a build tool (e.g., Maven), use:
+   ```bash
+   mvn compile exec:java -Dexec.mainClass="com.isae.medialibrary.Main"
+   ```
+
+   For plain javac:
+   ```bash
+   javac -d bin src/**/*.java
+   java -cp bin com.isae.medialibrary.Main
+   ```
+
+3. **First run**  
+   On first launch, the application will automatically create an `universite.xml` file with default sample data:
+   - **Student**: `etudiant1` / `pass123`
+   - **Administrator**: `admin` / `admin123`
+
+   You can use these credentials to log in.
+
+### Build and Package (Optional)
+If you want to create a JAR file:
+```bash
+jar cf medialibrary.jar -C bin .
+java -jar medialibrary.jar
+```
+
+## 📖 Usage
+
+### Student Mode
+- Login with your credentials.
+- Browse all media or filter by your enrolled subjects.
+- View media details and increment access counts.
+- You can add, edit, or delete media **only if you are enrolled in at least one of its subjects**.
+- Use the **"My Subjects"** button to quickly see media relevant to your courses.
+
+### Administrator Mode
+- Login with admin credentials.
+- Full control over media: add, edit, delete.
+- Export the entire media collection to CSV or XML.
+- View statistics (total media, students, top accessed).
+- Create new administrator accounts.
 
 ## 📁 Project Structure
 
 ```
-src/
-├── Models/
-│   ├── Media/                     # Media type implementations
-│   │   ├── DocumentMedia.java
-│   │   ├── VideoSession.java
-│   │   └── OnlineQuiz.java
-│   ├── Factories/                 # Factory pattern implementations
-│   │   ├── MediaFactory.java
-│   │   ├── DocumentMediaFactory.java
-│   │   ├── VideoFactory.java
-│   │   ├── QuizFactory.java
-│   │   └── MediaFactoryRegistry.java
-│   ├── Filters/                   # Filter pattern implementations
-│   │   ├── FilterCriteria.java
-│   │   ├── FilterComposite.java
-│   │   ├── AuthorFilter.java
-│   │   ├── SubjectFilter.java
-│   │   └── TitleFilter.java
-│   ├── Patterns/                  # Additional patterns
-│   │   ├── Observable.java
-│   │   ├── Observer.java
-│   │   ├── Exporter.java
-│   │   ├── CSVExporter.java
-│   │   └── XMLExporter.java
-│   ├── Users/                     # User management
-│   │   ├── Administrator.java
-│   │   └── Student.java
-│   └── Core/                      # Core system components
-│       ├── MediaLibrary.java
-│       ├── XMLManager.java
-│       ├── Specialty.java
-│       └── Subject.java
-├── UI/                            # User interface classes
-│   ├── AdminLoginFrame.java
-│   ├── StudentLoginFrame.java
-│   ├── AdminMainFrame.java
-│   ├── StudentMainFrame.java
-│   └── NewStudentFrame.java
-├── Reports/                       # Reporting system
-│   ├── StatisticsReport.java
-│   └── MostAccessedBySpecialtyReport.java
-└── Demo.java                      # Application entry point
+NFP121/
+├── com/isae/medialibrary/
+│   ├── Main.java                    – Application entry point
+│   ├── exception/                   – Custom exceptions
+│   ├── model/                       – Domain entities (Media, Student, etc.)
+│   ├── persistence/                 – Data persistence and exporters
+│   ├── service/                     – Business logic, factories, filters
+│   ├── util/                        – Constants, logging, validation
+│   └── view/                        – Swing GUI frames and dialogs
+└── README.md
 ```
 
-## 🚀 Getting Started
+## 🤝 Contributing
 
-### **Prerequisites**
-- Java JDK 17 or higher
-- BlueJ IDE (recommended) or any Java IDE
-- Basic understanding of design patterns
-
-### **Compilation & Execution**
-```bash
-# Compile all Java files
-javac -d bin src/**/*.java
-
-# Run the application
-java -cp bin Demo
-```
-
-### **BlueJ Specific**
-1. Open the project folder in BlueJ
-2. Compile all classes using the "Compile" button
-3. Right-click `Demo` class and select "void main(String[] args)"
-4. Follow the login prompts
-
-## 👥 User Roles
-
-### **Administrator**
-- **Access**: Full system control
-- **Features**:
-  - User management (add/remove students)
-  - Media library management
-  - System statistics and reporting
-  - Data export functionality
-  - System monitoring
-- **Interface**: `AdminMainFrame`
-
-### **Student**  
-- **Access**: Media consumption only
-- **Features**:
-  - Browse available media resources
-  - Search and filter functionality
-  - Access learning materials
-  - Track personal access history
-  - Participate in online quizzes
-- **Interface**: `StudentMainFrame`
-
-## 💾 Data Management
-
-### **Persistence Layer**
-- **`XMLManager`** - Handles all data persistence
-- XML-based storage for users, media, and access logs
-- Configurable file paths and backup systems
-
-### **Media Library Core**
-- **`MediaLibrary`** - Central repository singleton
-- Manages all media instances and metadata
-- Provides search and retrieval operations
-- Tracks access statistics and usage patterns
-
-## 📊 Reporting System
-
-### **Available Reports**
-1. **`StatisticsReport`** - General system usage statistics
-   - Total media count by type
-   - User engagement metrics
-   - Access frequency trends
-
-2. **`MostAccessedBySpecialtyReport`** - Specialty-based analytics
-   - Media popularity across specialties
-   - Student engagement patterns
-   - Resource effectiveness metrics
-
-### **Export Options**
-- **CSV Export** - Spreadsheet-compatible format via `CSVExporter`
-- **XML Export** - Structured data format via `XMLExporter`
-- Custom export strategies easily extendable
-
-## 🎨 Design Principles
-
-### **Separation of Concerns**
-- Clear distinction between UI, business logic, and data layers
-- Modular components with single responsibilities
-- Interface-based contracts between modules
-
-### **Extensibility**
-- Factory pattern enables easy addition of new media types
-- Filter system supports custom criteria implementation
-- Export strategies pluggable without core modifications
-
-### **Maintainability**
-- Consistent design pattern implementations
-- Comprehensive documentation in code
-- Modular testing capabilities
-
-### **Scalability**
-- Support for multiple concurrent users
-- Efficient media retrieval algorithms
-- Expandable reporting and analytics
-
-## 🔧 Technical Specifications
-
-- **Language**: Java 17+
-- **Storage**: XML-based persistence
-- **Patterns**: Factory, Observer, Strategy, Filter
-- **Interface**: Swing-based GUI
-- **Build**: BlueJ project compatible
-
-## 🤝 Contribution
-
-This educational project demonstrates design pattern implementations. For academic or learning purposes:
-
-1. Study the pattern implementations in respective packages
-2. Experiment with adding new media types using the factory pattern
-3. Extend filter criteria for enhanced search capabilities
-4. Implement additional export strategies
+Contributions are welcome! Feel free to open issues or submit pull requests for improvements, bug fixes, or new features.
 
 ## 📄 License
 
-MIT License - see LICENSE file for details.
-
-## 🏫 Educational Context
-
-Developed as a practical demonstration of software design patterns in Java, showcasing real-world application of:
-- Creational patterns (Factory)
-- Behavioral patterns (Observer, Strategy)
-- Structural patterns (Filter as specialized Composite)
-- Architectural separation of concerns
-
----
-
-*This system serves as both a functional media management tool and an educational resource for understanding enterprise Java application design with patterns.*
+This project is intended for educational purposes. You may use and modify it under the terms of the [MIT License](LICENSE).
